@@ -4,9 +4,9 @@ import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
 import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
 import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ConcreteOneUploadFileTest {
@@ -71,17 +71,17 @@ public class ConcreteOneUploadFileTest {
 		return folder;
 	}
 
-	@After
+	@AfterAll
 	public void removeTestFile() {
 		fileToUploadPath.delete();
 	}
 
-	@Before
+	@BeforeAll
 	public void createTestFile() throws IOException {
 		fileToUploadPath = File.createTempFile("TestOneSDKFile", "txt");
 	}
 
-	@Before
+	@BeforeAll
 	public void createAPIMock() {
 		mockApi = mock(ConcreteOneDriveSDK.class);
 	}

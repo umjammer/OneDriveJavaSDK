@@ -5,15 +5,15 @@ import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.common.TestSDKFactory;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcreteOneUploadFileIntegrationTest {
 
@@ -35,7 +35,7 @@ public class ConcreteOneUploadFileIntegrationTest {
 		System.out.println(uploadedFile.getId());
 	}
 
-	@After
+	@AfterAll
 	public void removeTestFile() throws IOException, OneDriveException {
 		if(uploadedFile!=null) {
 			uploadedFile.delete();

@@ -1,22 +1,46 @@
 package de.tuberlin.onedrivesdk.networking;
 
-import com.google.gson.*;
-import com.google.gson.annotations.Expose;
-import com.squareup.okhttp.*;
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.ExceptionEventHandler;
-import de.tuberlin.onedrivesdk.common.OneDriveScope;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.net.URLEncoder;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.Expose;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.common.ExceptionEventHandler;
+import de.tuberlin.onedrivesdk.common.OneDriveScope;
 
 /**
  * Handel's authentication and continues refresh of the accessToken.
@@ -338,6 +362,13 @@ public class OneDriveSession implements Runnable {
             logger.info("refreshing session");
             try {
                 refresh();
+                try {
+                    for (OneDriveSDK.Callback callback : callbacks) {
+                        callback.exec();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(System.err);
+                }
                 Thread.sleep(refreshDelay);
             } catch (OneDriveException e) {
                 logger.info("failed to refresh session - attempting recovery");
@@ -367,8 +398,11 @@ public class OneDriveSession implements Runnable {
 
     }
 
-    public void startRefreshThread() {
+    private List<OneDriveSDK.Callback> callbacks;
+    
+    public void startRefreshThread(OneDriveSDK.Callback... callbacks) {
         if (this.refreshThread == null) {
+            this.callbacks = Arrays.asList(callbacks);
             this.refreshThread = Executors.newSingleThreadExecutor();
             this.refreshThread.submit(this);
             logger.info("starting refresh thread");

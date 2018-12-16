@@ -85,12 +85,16 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
 
     @Override
     public OneUploadFile uploadFile(File file) throws IOException, OneDriveException {
-        return new ConcreteOneUploadFile(this, file, api);
+        return new ConcreteOneUploadFile(this, file, file.getName(), api);
+    }
+
+    @Override
+    public OneUploadFile uploadFile(File file, String filename) throws IOException, OneDriveException {
+        return new ConcreteOneUploadFile(this, file, filename, api);
     }
 
     @Override
     public String toString() {
         return "(D) " + name;
     }
-
 }

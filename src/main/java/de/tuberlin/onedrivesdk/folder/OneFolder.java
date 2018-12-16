@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+
+import org.json.simple.parser.ParseException;
 /**
  * This Interface provides all Methods to handle a Folder
  *
@@ -179,6 +181,15 @@ public interface OneFolder {
      * @throws OneDriveException
      */
     OneUploadFile uploadFile(File file) throws IOException, OneDriveException;
+
+    /**
+     * @param file the file to be uploaded
+     * @param filename
+     * @return the OneUploadFile session
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneUploadFile uploadFile(File file, String filename) throws IOException, OneDriveException;
 
     String toString();
 

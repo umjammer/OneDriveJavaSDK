@@ -37,8 +37,13 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 	private RandomAccessFile randFile;
 	private String uploadUrl ="";
 
-	public ConcreteOneUploadFile(ConcreteOneFolder parentFolder,
-			File fileToUpload, ConcreteOneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+    public ConcreteOneUploadFile(ConcreteOneFolder parentFolder,
+                                 File fileToUpload, ConcreteOneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+        this(parentFolder, fileToUpload, fileToUpload.getName(), api);
+    }
+
+    public ConcreteOneUploadFile(ConcreteOneFolder parentFolder,
+			File fileToUpload, String filename, ConcreteOneDriveSDK api) throws IOException, OneDriveAuthenticationException {
 		checkNotNull(parentFolder);
 		this.api = checkNotNull(api);
 
@@ -57,7 +62,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 		} else {
 			throw new NullPointerException("FileToUpload was null");
 		}
-		this.uploadSession = api.createUploadSession(parentFolder, fileToUpload.getName());
+		this.uploadSession = api.createUploadSession(parentFolder, filename);
 		this.uploadUrl = this.uploadSession.getUploadURL();
     }
 

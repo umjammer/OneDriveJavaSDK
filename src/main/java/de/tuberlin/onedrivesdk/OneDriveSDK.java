@@ -1,12 +1,13 @@
 package de.tuberlin.onedrivesdk;
 
-import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.drive.OneDrive;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveSession;
-
 import java.io.IOException;
 import java.util.List;
+
+import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.drive.OneDrive;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.networking.OneDriveSession;
 
 /**
  * This interface provides the functionality of the OneDrive API.
@@ -128,6 +129,17 @@ public interface OneDriveSDK {
     OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException, OneDriveException;
 
     /**
+     * Gets item by path.
+     *
+     * @param pathToFile
+     * @param drive
+     * @return OneItem
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneItem getItemByPath(String pathToFile) throws IOException, OneDriveException;
+
+    /**
      * Used to authorize the session with the OAuth Response Code (used for first authentication)
      *
      * @param oAuthCode the code from the OneDrive OAuth authentication process.
@@ -183,5 +195,10 @@ public interface OneDriveSDK {
      * @see OneDriveSession#refreshDelay
      * @see OneDriveSession#startRefreshThread()
      */
-    void startSessionAutoRefresh();
+    void startSessionAutoRefresh(Callback... callbacks);
+    
+    @FunctionalInterface
+    interface Callback {
+        void exec();
+    }
 }

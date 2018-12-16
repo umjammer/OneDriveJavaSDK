@@ -2,7 +2,7 @@ package de.tuberlin.onedrivesdk.common;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 
@@ -16,10 +16,10 @@ public class TestSDKFactory {
         try {
             return ConcreteOneDriveSDK.createFromSession(SessionProvider.getSession());
         } catch (IOException e) {
-            Assert.fail(e.getMessage());
+            Assertions.fail(e.getMessage());
             return null;
         } catch (OneDriveException e) {
-            Assert.fail(e.getMessage());
+            Assertions.fail(e.getMessage());
             return null;
         }
     }

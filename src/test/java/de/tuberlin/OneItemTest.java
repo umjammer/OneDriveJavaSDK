@@ -4,8 +4,8 @@ import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneItemType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class OneItemTest {
     public void testNullJsonParseItems() {
         try {
             OneItem.parseItemsFromJson(null);
-            Assert.fail();
+            Assertions.fail();
         } catch (org.json.simple.parser.ParseException e) {
         } catch (OneDriveException e) {
         } catch (NullPointerException e) {
@@ -31,7 +31,7 @@ public class OneItemTest {
 
         try {
             OneItem.fromJSON(null);
-            Assert.fail();
+            Assertions.fail();
         } catch (org.json.simple.parser.ParseException e) {
         } catch (OneDriveException e) {
         } catch (NullPointerException e) {
@@ -45,21 +45,21 @@ public class OneItemTest {
         try {
             folder = OneItem.fromJSON(json);
         } catch (org.json.simple.parser.ParseException e) {
-            Assert.fail();
+            Assertions.fail();
         } catch (OneDriveException e) {
-            Assert.fail();
+            Assertions.fail();
         }
 
-        Assert.assertEquals("", folder.getId());
-        Assert.assertEquals("", folder.getName());
-        Assert.assertEquals(0, folder.getCreatedBy().size());
-        Assert.assertEquals(0, folder.getCreatedDateTime());
-        Assert.assertEquals(0, folder.getLastModifiedBy().size());
-        Assert.assertEquals(0, folder.getLastModifiedDateTime());
-        Assert.assertEquals("", folder.getCTag());
-        Assert.assertEquals("", folder.getETag());
-        Assert.assertEquals(0, folder.getSize());
-        Assert.assertEquals("", folder.getWebUrl());
+        Assertions.assertEquals("", folder.getId());
+        Assertions.assertEquals("", folder.getName());
+        Assertions.assertEquals(0, folder.getCreatedBy().size());
+        Assertions.assertEquals(0, folder.getCreatedDateTime());
+        Assertions.assertEquals(0, folder.getLastModifiedBy().size());
+        Assertions.assertEquals(0, folder.getLastModifiedDateTime());
+        Assertions.assertEquals("", folder.getCTag());
+        Assertions.assertEquals("", folder.getETag());
+        Assertions.assertEquals(0, folder.getSize());
+        Assertions.assertEquals("", folder.getWebUrl());
     }
 
     @Test
@@ -69,9 +69,9 @@ public class OneItemTest {
         try {
             items = OneItem.parseItemsFromJson(json);
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
-        Assert.assertEquals(2, items.size());
+        Assertions.assertEquals(2, items.size());
     }
 
     @Test
@@ -81,9 +81,9 @@ public class OneItemTest {
         try {
             items = OneItem.parseItemsFromJson(json, OneItemType.FILE);
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
-        Assert.assertEquals(1, items.size());
+        Assertions.assertEquals(1, items.size());
     }
 
     @Test
@@ -93,9 +93,9 @@ public class OneItemTest {
         try {
             items = OneItem.parseItemsFromJson(json, OneItemType.FOLDER);
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
-        Assert.assertEquals(1, items.size());
+        Assertions.assertEquals(1, items.size());
     }
 
     @Test
@@ -104,11 +104,11 @@ public class OneItemTest {
         List<OneItem> items = null;
         try {
             items = OneItem.parseItemsFromJson(json, OneItemType.ALL);
-            Assert.fail();
+            Assertions.fail();
         } catch (OneDriveException | org.json.simple.parser.ParseException e) {
 
         } catch (Exception e){
-            Assert.fail(e.getMessage());
+            Assertions.fail(e.getMessage());
         }
     }
 
@@ -119,17 +119,17 @@ public class OneItemTest {
         try {
             item = OneItem.fromJSON(json);
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
-        Assert.assertEquals(1430469019L, item.getCreatedDateTime());
+        Assertions.assertEquals(1430469019L, item.getCreatedDateTime());
 
         json = "{\"createdDateTime\":\"2015-05-01T\"}";
         try {
             item = OneItem.fromJSON(json);
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
-        Assert.assertEquals(0L, item.getCreatedDateTime());
+        Assertions.assertEquals(0L, item.getCreatedDateTime());
     }
 
     @Test
@@ -138,11 +138,11 @@ public class OneItemTest {
         try {
             item = OneItem.fromJSON("{}");
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
         try {
             item.setApi(null);
-            Assert.fail();
+            Assertions.fail();
         } catch (OneDriveException e) {
         }
     }
@@ -154,12 +154,12 @@ public class OneItemTest {
         try {
             item = OneItem.fromJSON("{}");
         } catch (Exception e){
-            Assert.fail();
+            Assertions.fail();
         }
         try {
             item.setApi(api);
         } catch (Exception e){
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -174,7 +174,7 @@ public class OneItemTest {
             item.setApi(api);
             item.delete();
         } catch (Exception e){
-            Assert.fail();
+            Assertions.fail();
         }
     }
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * The root class of all files and folder types that can be accessed through this sdk.
@@ -151,6 +152,8 @@ public abstract class OneItem {
         ArrayList<OneItem> itemList = new ArrayList<>();
 
         JSONObject root = getJsonObject(json);
+
+//System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(json)));
 
         if (root.containsKey("value")) {
             JSONArray values = (JSONArray) root.get("value");
@@ -307,6 +310,7 @@ public abstract class OneItem {
         if (dateTime != null && dateTime.indexOf('.') != -1) {
             dateTime = dateTime.substring(0, dateTime.indexOf('.'));
             DateFormat df = new SimpleDateFormat("y-M-d'T'H:m:s");
+            df.setTimeZone(TimeZone.getTimeZone("GMT"));
             return df.parse(dateTime);
         } else {
             throw new java.text.ParseException(dateTime, -1);
@@ -410,4 +414,20 @@ public abstract class OneItem {
      * @return boolean
      */
     public abstract boolean isFolder();
+
+
+    /**
+     * Rename this file in the target folder.
+     *
+     * @param sourceFolder destination folder
+     * @param name a new name for the file
+     * @return the new created reference of the file in the new folder
+     * @throws IOException
+     * @throws OneDriveException
+     * @throws ParseException
+     * @throws InterruptedException
+     */
+    public OneItem rename(OneFolder sourceFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException {
+        return api.rename(id, sourceFolder.getId(), name);
+    }
 }
