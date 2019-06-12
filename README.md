@@ -1,3 +1,5 @@
+[![Release](https://jitpack.io/v/umjammer/OneDriveJavaSDK.svg)](https://jitpack.io/#umjammer/OneDriveJavaSDK)
+
 # OneDrive SDK
 
 ## Quickstart
@@ -57,6 +59,7 @@ Alternatively you can use maven. We host a maven artifact on github. The followi
 </dependencies>
 ...
 ```
+
 ## Recommended CodeFlow for user authentication
  The first time a new user uses your application he or she needs to go to the authentication URL. The following code gets that URL:
  
@@ -110,7 +113,7 @@ More information can be found [here](http://logging.apache.org/log4j/2.x/manual/
 
 ### Automatic Refresh
 The SDK provides the ability to continuously refresh the authentication token. This is useful if your application will need to use OneDrive over extended period of time.
-After the application went through the  authentication steps described [here](#recommended-codeflow-for-user-authentication) the you can call the`sdk.startSessionAutoRefresh()` method. Now keep in mind that you need to terminate that thread if you want your application to close normally. To do that you can call the `sdk.disconnect()` method.
+After the application went through the  authentication steps described [here](http://tawalaya.github.io/OneDriveJavaSDK/README.md#Recommended%20CodeFlow%20for%20user%20authentication) the you can call the`sdk.startSessionAutoRefresh()` method. Now keep in mind that you need to terminate that thread if you want your application to close normally. To do that you can call the `sdk.disconnect()` method.
 
 ### Offered Operations
 <!-- TODO add JDOC URLs -->
