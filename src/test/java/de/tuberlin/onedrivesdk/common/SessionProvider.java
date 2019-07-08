@@ -1,6 +1,6 @@
 package de.tuberlin.onedrivesdk.common;
 
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.networking.OneDriveSession;
 

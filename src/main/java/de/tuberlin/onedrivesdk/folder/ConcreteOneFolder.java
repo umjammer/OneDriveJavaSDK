@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -91,6 +92,11 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     @Override
     public OneUploadFile uploadFile(File file, String filename) throws IOException, OneDriveException {
         return new ConcreteOneUploadFile(this, file, filename, api);
+    }
+
+    @Override
+    public OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     @Override

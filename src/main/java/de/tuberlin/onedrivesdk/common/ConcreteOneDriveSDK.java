@@ -17,10 +17,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -43,6 +43,7 @@ import de.tuberlin.onedrivesdk.uploadFile.UploadSession;
  * This class provides the functionality to authenticate to OneDrive and handles the communication.
  */
 public class ConcreteOneDriveSDK implements OneDriveSDK {
+    @SuppressWarnings("unused")
     private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
     private static final Gson gson = new Gson();
 
@@ -69,8 +70,10 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * @return OneDriveSDK
      */
     public static OneDriveSDK createOneDriveConnection(String clientId, String clientSecret,String redirect_uri,ExceptionEventHandler handler, OneDriveScope[] scopes) {
-        OkHttpClient cli = new OkHttpClient();
-        cli.setFollowRedirects(false);
+        OkHttpClient cli = new OkHttpClient().newBuilder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .build();;
         OneDriveSession session = OneDriveSession.initializeSession(cli, clientId, clientSecret,redirect_uri, scopes);
         return new ConcreteOneDriveSDK(session);
     }
@@ -319,6 +322,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String url = String.format(requestURL, folder.getId(), fileName);
         PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.POST);
+        request.setBody(new byte[] {});
 
         String json = this.makeRequest(request).getBodyAsString();
 
@@ -587,7 +591,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * @throws IOException
      */
     public byte[] download(String fileID) throws IOException, OneDriveAuthenticationException {
-        session.getClient().setFollowRedirects(false);
+//        session.getClient().setFollowRedirects(false);
 
         String url = "drive/items/%s/content";
         url = String.format(url, fileID);

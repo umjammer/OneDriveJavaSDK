@@ -113,6 +113,7 @@ public class ConsoleClient {
 
     }
 
+    @SuppressWarnings("unused")
     private static String printCurrentFolder() {
         if (currentFolder != null) {
             return currentFolder.toString();

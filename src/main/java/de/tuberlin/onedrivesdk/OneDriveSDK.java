@@ -132,7 +132,6 @@ public interface OneDriveSDK {
      * Gets item by path.
      *
      * @param pathToFile
-     * @param drive
      * @return OneItem
      * @throws IOException
      * @throws OneDriveException
@@ -156,7 +155,7 @@ public interface OneDriveSDK {
      * @throws OneDriveException
      */
     void authenticateWithRefreshToken(String refreshToken) throws IOException, OneDriveException;
-    
+
     /**
      * Returns the RefreshToken of the Current Session, if any exists and
      * the current session is valid.
@@ -193,10 +192,10 @@ public interface OneDriveSDK {
      * used to start a thread that request a new authentication token
      *
      * @see OneDriveSession#refreshDelay
-     * @see OneDriveSession#startRefreshThread()
+     * @see OneDriveSession#startRefreshThread(Callback...)
      */
     void startSessionAutoRefresh(Callback... callbacks);
-    
+
     @FunctionalInterface
     interface Callback {
         void exec();
