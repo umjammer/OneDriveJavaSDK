@@ -655,6 +655,9 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
                 PreparedRequest contentRequest = new PreparedRequest(redirectUrl, PreparedRequestMethod.GET);
                 response = makeRequest(contentRequest);
                 Thread.sleep(500);
+                if (response.getStatusCode() == 303) {
+                    redirectUrl = response.getHeader("Location");
+                }
             } while (response.getStatusCode() != 200 && response.getStatusCode() != 500);
 
             if (response.getStatusCode() == 500) {
