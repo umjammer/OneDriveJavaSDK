@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/umjammer/OneDriveJavaSDK.svg)](https://jitpack.io/#umjammer/OneDriveJavaSDK)
+[![Release](https://jitpack.io/v/umjammer/OneDriveJavaSDK.svg)](https://jitpack.io/#umjammer/OneDriveJavaSDK) [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
 
 # OneDrive SDK
 
