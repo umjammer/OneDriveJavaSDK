@@ -73,7 +73,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         OkHttpClient cli = new OkHttpClient().newBuilder()
             .followRedirects(false)
             .followSslRedirects(false)
-            .build();;
+            .build();
         OneDriveSession session = OneDriveSession.initializeSession(cli, clientId, clientSecret,redirect_uri, scopes);
         return new ConcreteOneDriveSDK(session);
     }
