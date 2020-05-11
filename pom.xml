@@ -152,4 +152,9 @@
 	</repositories>
 
 
+	<scm>
+	  <url>https://github.com/umjammer/OneDriveJavaSDK</url>
+	</scm>
+	<url>https://github.com/umjammer/OneDriveJavaSDK</url>
+	<name>OneDriveJavaSDK</name>
 </project>
