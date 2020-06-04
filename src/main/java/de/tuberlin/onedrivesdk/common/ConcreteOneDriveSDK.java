@@ -1,6 +1,7 @@
 package de.tuberlin.onedrivesdk.common;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -602,6 +603,25 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         OneResponse contentResponse = makeRequest(contentRequest);
 
         return contentResponse.getBodyAsBytes();
+    }
+
+    /**
+     * Download a file from OneDrive by id and returns the InputStream.
+     *
+     * @param fileID the OneDrive file id
+     * @return InputStream
+     * @throws IOException
+     */
+    public InputStream downloadAsStream(String fileID) throws IOException, OneDriveAuthenticationException {
+        String url = "drive/items/%s/content";
+        url = String.format(url, fileID);
+
+        PreparedRequest downloadRequest = new PreparedRequest(url, PreparedRequestMethod.GET);
+        OneResponse getResponse = makeRequest(downloadRequest);
+        PreparedRequest contentRequest = new PreparedRequest(getResponse.getHeader("Location"), PreparedRequestMethod.GET);
+        OneResponse contentResponse = makeRequest(contentRequest);
+
+        return contentResponse.getBodyAsStream();
     }
 
     /**

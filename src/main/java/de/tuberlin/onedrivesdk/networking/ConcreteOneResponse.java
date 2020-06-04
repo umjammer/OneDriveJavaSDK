@@ -3,6 +3,7 @@ package de.tuberlin.onedrivesdk.networking;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -14,24 +15,35 @@ public class ConcreteOneResponse implements OneResponse {
 
 	public ConcreteOneResponse(Response response) throws IOException {
 		this.response = response;
-        try {
-            this.body = response.body().bytes();
-        } catch (Exception e) {
-            this.body = new byte[0];
-        }
     }
+
+	private byte[] getBody() {
+	    if (body == null) {
+            try {
+                this.body = response.body().bytes();
+            } catch (Exception e) {
+                this.body = new byte[0];
+            }
+	    }
+	    return body;
+	}
 
 	@Override
 	public String getBodyAsString() {
-		return new String(this.body);
+		return new String(getBody()); // TODO encoding
 	}
 
     @Override
     public byte[] getBodyAsBytes() {
-        return body;
+        return getBody();
     }
 
-	@Override
+    @Override
+    public InputStream getBodyAsStream() {
+        return this.response.body().byteStream();
+    }
+
+    @Override
 	public int getStatusCode() {
 		return this.response.code();
 	}

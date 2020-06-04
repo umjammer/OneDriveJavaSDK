@@ -2,6 +2,7 @@ package de.tuberlin.onedrivesdk.file;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
 import de.tuberlin.onedrivesdk.drive.DriveUser;
 import org.json.simple.parser.ParseException;
@@ -150,6 +151,14 @@ public interface OneFile {
      * @return the DownloadSession
      */
     OneDownloadFile download(File targetFile) throws FileNotFoundException;
+
+    /**
+     * Downloads this file into the specified local file handle.
+     * Will block until finished or interrupted.
+     *
+     * @return the DownloadSession
+     */
+    OneDownload download() throws IOException;
 
     /**
      * Deletes the current folder.

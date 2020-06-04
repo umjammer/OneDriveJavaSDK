@@ -1,5 +1,6 @@
 package de.tuberlin.onedrivesdk.networking;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -50,4 +51,7 @@ public interface OneResponse {
      * @return whether the htp request was a successful
      */
     boolean wasSuccess();
+
+    /** */
+    InputStream getBodyAsStream();
 }

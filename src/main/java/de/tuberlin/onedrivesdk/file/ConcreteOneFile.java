@@ -3,7 +3,9 @@ package de.tuberlin.onedrivesdk.file;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownloadFile;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
 import org.json.simple.parser.ParseException;
 
@@ -32,6 +34,11 @@ public class ConcreteOneFile extends OneItem implements OneFile {
 
     public OneDownloadFile download(File targetFile) throws FileNotFoundException {
         return new ConcreteOneDownloadFile(this,api,targetFile);
+    }
+
+    @Override
+    public OneDownload download() throws IOException {
+        return new ConcreteOneDownload(this, api);
     }
 
     @Override
