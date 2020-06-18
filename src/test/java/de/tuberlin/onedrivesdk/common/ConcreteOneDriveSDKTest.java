@@ -1,20 +1,5 @@
 package de.tuberlin.onedrivesdk.common;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.OneDriveFactory;
-import de.tuberlin.onedrivesdk.OneDriveSDK;
-import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
-import de.tuberlin.onedrivesdk.drive.OneDrive;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
-import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +8,23 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.OneDriveFactory;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
+import de.tuberlin.onedrivesdk.drive.OneDrive;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 
 public class ConcreteOneDriveSDKTest {
 
@@ -40,7 +42,7 @@ public class ConcreteOneDriveSDKTest {
 
         this.generateFile(fileName, fileLength);
 
-        HashCode sourceHash = Files.hash(localFile, Hashing.sha1());
+        HashCode sourceHash = Files.asByteSource(localFile).hash(Hashing.sha256());
 
         OneFolder targetFolder = api.getFolderByPath(targetPath);
         final OneUploadFile upload = targetFolder.uploadFile(localFile);
@@ -55,7 +57,7 @@ public class ConcreteOneDriveSDKTest {
         OneDownloadFile downloadedFile = remoteFile.download(destinationFile);
         downloadedFile.startDownload();
 
-        HashCode downloadedHash = Files.hash(destinationFile, Hashing.sha1());
+        HashCode downloadedHash = Files.asByteSource(destinationFile).hash(Hashing.sha256());
 
         if (!localFile.delete())
             System.err.println("Local file could not be deleted.");
@@ -356,7 +358,7 @@ public class ConcreteOneDriveSDKTest {
 
         Assertions.assertEquals(sourceFolder.getId(), file.getParentFolder().getId());
 
-        OneFile newFile = file.move(targetFolder);
+        OneFile newFile = OneFile.class.cast(file.move(targetFolder));
         file = file.refresh();
 
         Assertions.assertEquals(targetFolder.getId(), file.getParentFolder().getId());

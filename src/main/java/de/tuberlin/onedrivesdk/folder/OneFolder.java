@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.simple.parser.ParseException;
+
 /**
  * This Interface provides all Methods to handle a Folder
  *
@@ -211,6 +213,18 @@ public interface OneFolder {
      * @throws IOException
      */
     boolean delete() throws OneDriveException,IOException;
+
+    /**
+     * Move this folder into the target folder.
+     *
+     * @param targetFolder destination folder
+     * @return the reference of the file in the new folder
+     * @throws InterruptedException
+     * @throws OneDriveException
+     * @throws ParseException
+     * @throws IOException
+     */
+    OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
 
     /**
      * Gets the raw JSON which is received from the OneDrive API.

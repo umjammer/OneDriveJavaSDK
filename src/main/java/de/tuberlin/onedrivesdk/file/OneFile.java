@@ -1,6 +1,7 @@
 package de.tuberlin.onedrivesdk.file;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
@@ -205,7 +206,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws IOException
      */
-    OneFile move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
+    OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
 
     /**
      * Gets the raw JSON which is received from the OneDrive API.

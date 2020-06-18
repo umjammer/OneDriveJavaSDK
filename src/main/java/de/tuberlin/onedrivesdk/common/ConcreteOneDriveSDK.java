@@ -698,13 +698,13 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      *
      * @param id            OneDrive item id of the file to be moved
      * @param destinationId id of the target folder
-     * @return OneFile
+     * @return OneItem
      * @throws IOException
      * @throws OneDriveException
      * @throws ParseException
      * @throws InterruptedException
      */
-    public OneFile move(String id, String destinationId) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneItem move(String id, String destinationId) throws IOException, OneDriveException, ParseException, InterruptedException {
         ParentReference reference = new ParentReference();
         reference.setId(destinationId);
 
@@ -723,7 +723,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
             throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
         }
 
-        return (OneFile) ConcreteOneFile.fromJSON(response.getBodyAsString()).setApi(this);
+        return OneItem.fromJSON(response.getBodyAsString()).setApi(this);
     }
 
     /**

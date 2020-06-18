@@ -1,19 +1,21 @@
 package de.tuberlin.onedrivesdk.folder;
 
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.common.ConflictBehavior;
-import de.tuberlin.onedrivesdk.common.OneItemType;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.uploadFile.ConcreteOneUploadFile;
-import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Consumer;
+
+import org.json.simple.parser.ParseException;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.common.ConflictBehavior;
+import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.common.OneItemType;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.uploadFile.ConcreteOneUploadFile;
+import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 
 /**
  * Here goes everything that is needed for every resource
@@ -97,6 +99,11 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     @Override
     public OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException {
         throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    @Override
+    public OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
+        return api.move(id, targetFolder.getId());
     }
 
     @Override

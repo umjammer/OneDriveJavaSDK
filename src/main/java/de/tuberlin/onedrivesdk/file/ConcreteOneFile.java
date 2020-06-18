@@ -92,7 +92,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFile move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
+    public OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
         return api.move(id, targetFolder.getId());
     }
 }
