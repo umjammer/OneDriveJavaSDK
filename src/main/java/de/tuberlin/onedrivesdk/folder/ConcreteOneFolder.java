@@ -14,7 +14,9 @@ import de.tuberlin.onedrivesdk.common.ConflictBehavior;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.common.OneItemType;
 import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.uploadFile.ConcreteOneUpload;
 import de.tuberlin.onedrivesdk.uploadFile.ConcreteOneUploadFile;
+import de.tuberlin.onedrivesdk.uploadFile.OneUpload;
 import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 
 /**
@@ -99,6 +101,11 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     @Override
     public OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException {
         throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    @Override
+    public OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException, OneDriveException {
+        return new ConcreteOneUpload(this, filename, size, finished, api);
     }
 
     @Override

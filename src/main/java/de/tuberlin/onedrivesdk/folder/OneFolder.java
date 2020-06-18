@@ -5,6 +5,7 @@ import de.tuberlin.onedrivesdk.common.ConflictBehavior;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.drive.DriveUser;
 import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.uploadFile.OneUpload;
 import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.json.simple.parser.ParseException;
 
@@ -202,8 +204,13 @@ public interface OneFolder {
      */
     OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException;
 
-    String toString();
-
+    /**
+     * @param filename
+     * @return the OneUploadFile session
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException, OneDriveException;
 
     /**
      * Deletes the current folder.
