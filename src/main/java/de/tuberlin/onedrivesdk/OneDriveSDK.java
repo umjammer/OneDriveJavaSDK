@@ -3,7 +3,10 @@ package de.tuberlin.onedrivesdk;
 import java.io.IOException;
 import java.util.List;
 
+import org.json.simple.parser.ParseException;
+
 import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.common.Subscription;
 import de.tuberlin.onedrivesdk.drive.OneDrive;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
@@ -137,6 +140,13 @@ public interface OneDriveSDK {
      * @throws OneDriveException
      */
     OneItem getItemByPath(String pathToFile) throws IOException, OneDriveException;
+
+    /**
+     * @param url webhook url
+     * @param clientState
+     * @return Subscription
+     */
+    Subscription subscribe(String url, String clientState) throws IOException, OneDriveException, ParseException, InterruptedException;
 
     /**
      * Used to authorize the session with the OAuth Response Code (used for first authentication)

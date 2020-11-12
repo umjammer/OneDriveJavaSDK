@@ -1,13 +1,5 @@
 package de.tuberlin.onedrivesdk.folder;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.ConflictBehavior;
-import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.drive.DriveUser;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.uploadFile.OneUpload;
-import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +8,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.json.simple.parser.ParseException;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.common.ConflictBehavior;
+import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.drive.DriveUser;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.uploadFile.OneUpload;
+import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 
 /**
  * This Interface provides all Methods to handle a Folder

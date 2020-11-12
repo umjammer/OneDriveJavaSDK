@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,10 +19,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -38,13 +35,17 @@ import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
 import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
 import de.tuberlin.onedrivesdk.uploadFile.UploadSession;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
  * This class provides the functionality to authenticate to OneDrive and handles the communication.
  */
 public class ConcreteOneDriveSDK implements OneDriveSDK {
-    @SuppressWarnings("unused")
+
     private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
     private static final Gson gson = new Gson();
 
@@ -74,6 +75,9 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         OkHttpClient cli = new OkHttpClient().newBuilder()
             .followRedirects(false)
             .followSslRedirects(false)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build();
         OneDriveSession session = OneDriveSession.initializeSession(cli, clientId, clientSecret,redirect_uri, scopes);
         return new ConcreteOneDriveSDK(session);
@@ -761,6 +765,76 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String bodyJson = response.getBodyAsString();
         return OneItem.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * TODO is it right? because w/o itemId doesn't work.
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public Subscription subscribe(String notificationUrl, String clientState) throws IOException, OneDriveException, ParseException, InterruptedException {
+        SubscriptionRequest requestBean = new SubscriptionRequest(notificationUrl, clientState);
+
+        String url = String.format("drive/root/subscriptions");
+        String json = gson.toJson(requestBean);
+
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.POST);
+        request.addHeader("Content-Type", "application/json");
+        request.setBody(json.getBytes());
+logger.info(url);
+logger.info(json);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 201) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
+
+        String bodyJson = response.getBodyAsString();
+        return Subscription.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * TODO argument should be Subscription
+     * @param subscriptionId {@link Subscription#getId()}
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public Subscription updateSubscription(String subscriptionId) throws IOException, OneDriveException, ParseException, InterruptedException {
+        SubscriptionUpdateRequest requestBean = new SubscriptionUpdateRequest();
+
+        String url = String.format("drive/root/subscriptions/%s", subscriptionId);
+        String json = gson.toJson(requestBean);
+
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.PATCH);
+        request.addHeader("Content-Type", "application/json");
+        request.setBody(json.getBytes());
+logger.info(url);
+logger.info(json);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 200) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
+
+        String bodyJson = response.getBodyAsString();
+        return Subscription.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * @param subscriptionId {@link Subscription#getId()}
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public void deleteSubscription(String subscriptionId) throws IOException, OneDriveException, ParseException, InterruptedException {
+        String url = String.format("drive/root/subscriptions/%s", subscriptionId);
+
+logger.info(url);
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.DELETE);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 204) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
     }
 
     @Override

@@ -1,17 +1,18 @@
 package de.tuberlin.onedrivesdk.file;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownloadFile;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
-import org.json.simple.parser.ParseException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
 
 /**
  * Implementation of OneFile using methods from ConcreteOneDriveSDK

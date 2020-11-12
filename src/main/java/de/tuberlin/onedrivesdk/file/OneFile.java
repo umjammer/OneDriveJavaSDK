@@ -1,17 +1,19 @@
 package de.tuberlin.onedrivesdk.file;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
-import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
-import de.tuberlin.onedrivesdk.drive.DriveUser;
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+
+import org.json.simple.parser.ParseException;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
+import de.tuberlin.onedrivesdk.drive.DriveUser;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+
 /**
  * This Interface provides all Methods to handle a File
  *
