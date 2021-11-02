@@ -55,7 +55,7 @@ public class Subscription {
      * @throws ParseException if the JSON can not be parsed
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
-    public static Subscription fromJSON(String json) throws ParseException, OneDriveException {
+    public static Subscription fromJSON(String json) throws OneDriveException {
         return gson.fromJson(json, Subscription.class);
     }
 

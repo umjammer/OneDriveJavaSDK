@@ -107,7 +107,7 @@ public interface OneFolder {
      * @throws OneDriveException
      * @throws IOException
      */
-    OneFolder refresh() throws  OneDriveException, IOException;
+    OneFolder refresh() throws IOException;
 
     /**
      * Gets the currents folders parent.
@@ -117,7 +117,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getParentFolder() throws IOException, OneDriveException;
+    OneFolder getParentFolder() throws IOException;
 
     /**
      * Gets all folder inside the current folder.
@@ -126,7 +126,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    List<OneFolder> getChildFolder() throws IOException, OneDriveException;
+    List<OneFolder> getChildFolder() throws IOException;
 
     /**
      * Gets all normal files in this folder.
@@ -135,7 +135,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    List<OneFile> getChildFiles() throws IOException, OneDriveException;
+    List<OneFile> getChildFiles() throws IOException;
 
     /**
      * Gets the children of this folder (e.g. files and folder).
@@ -144,7 +144,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    List<OneItem> getChildren() throws IOException, OneDriveException;
+    List<OneItem> getChildren() throws IOException;
 
     /**
      * Create a folder with the specified name in the current folder.
@@ -154,7 +154,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder createFolder(String name) throws IOException, OneDriveException;
+    OneFolder createFolder(String name) throws IOException;
 
     /**
      * Create a folder with the specified name in the current folder.
@@ -165,7 +165,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder createFolder(String name, ConflictBehavior behavior) throws IOException, OneDriveException;
+    OneFolder createFolder(String name, ConflictBehavior behavior) throws IOException;
 
     /**
      * Gets child count.
@@ -184,7 +184,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneUploadFile uploadFile(File file) throws IOException, OneDriveException;
+    OneUploadFile uploadFile(File file) throws IOException;
 
     /**
      * @param file the file to be uploaded
@@ -193,7 +193,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneUploadFile uploadFile(File file, String filename) throws IOException, OneDriveException;
+    OneUploadFile uploadFile(File file, String filename) throws IOException;
 
     /**
      * @param file the file to be uploaded
@@ -202,7 +202,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException;
+    OneUploadFile uploadFile(InputStream file, String filename) throws IOException;
 
     /**
      * @param filename
@@ -210,7 +210,7 @@ public interface OneFolder {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException, OneDriveException;
+    OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException;
 
     /**
      * Deletes the current folder.
@@ -219,7 +219,7 @@ public interface OneFolder {
      * @throws OneDriveException
      * @throws IOException
      */
-    boolean delete() throws OneDriveException,IOException;
+    boolean delete() throws IOException;
 
     /**
      * Move this folder into the target folder.
@@ -231,7 +231,7 @@ public interface OneFolder {
      * @throws ParseException
      * @throws IOException
      */
-    OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
+    OneItem move(OneFolder targetFolder) throws IOException;
 
     /**
      * Gets the raw JSON which is received from the OneDrive API.

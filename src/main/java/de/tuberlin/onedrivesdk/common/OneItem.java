@@ -111,20 +111,24 @@ public abstract class OneItem {
      * @throws ParseException if the JSON can not be parsed
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
-    public static OneItem fromJSON(String json) throws ParseException, OneDriveException {
-        JSONObject root = getJsonObject(json);
-
-        OneDriveError error;
-        if ((error = OneDriveError.parseError(json)) != null) {
-            throw new OneDriveException(error.toString());
-        }
-
-        Gson gson = new Gson();
-        if (root.containsKey("file")) {
-            return gson.fromJson(json, ConcreteOneFile.class).setLastRefresh(System.currentTimeMillis());
-        } else {
-            return gson.fromJson(json, ConcreteOneFolder.class).setLastRefresh(System.currentTimeMillis());
-        }
+    public static OneItem fromJSON(String json) throws OneDriveException {
+    	try {
+	        JSONObject root = getJsonObject(json);
+	
+	        OneDriveError error;
+	        if ((error = OneDriveError.parseError(json)) != null) {
+	            throw new OneDriveException(error.toString());
+	        }
+	
+	        Gson gson = new Gson();
+	        if (root.containsKey("file")) {
+	            return gson.fromJson(json, ConcreteOneFile.class).setLastRefresh(System.currentTimeMillis());
+	        } else {
+	            return gson.fromJson(json, ConcreteOneFolder.class).setLastRefresh(System.currentTimeMillis());
+	        }
+    	} catch (ParseException e) {
+    		throw new OneDriveException("API - response could not be processed", e);
+    	}
     }
 
     /**
@@ -135,7 +139,7 @@ public abstract class OneItem {
      * @throws ParseException if the JSON can not be parsed
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
-    public static List<OneItem> parseItemsFromJson(String json) throws ParseException, OneDriveException {
+    public static List<OneItem> parseItemsFromJson(String json) throws IOException {
         return OneItem.parseItemsFromJson(json, OneItemType.ALL);
     }
 
@@ -148,7 +152,7 @@ public abstract class OneItem {
      * @throws ParseException if the JSON can not be parsed
      * @throws OneDriveException if the json dose not contain a 'value' attribute
      */
-    public static List<OneItem> parseItemsFromJson(String json, OneItemType type) throws ParseException, OneDriveException {
+    public static List<OneItem> parseItemsFromJson(String json, OneItemType type) throws IOException {
         ArrayList<OneItem> itemList = new ArrayList<>();
 
         JSONObject root = getJsonObject(json);
@@ -186,11 +190,15 @@ public abstract class OneItem {
      * @return JSONObject
      * @throws ParseException if the JSON can not be parsed
      */
-    private static JSONObject getJsonObject(String json) throws ParseException {
-        JSONParser parser = new JSONParser();
-        JSONObject root;
-        root = (JSONObject) parser.parse(json);
-        return root;
+    private static JSONObject getJsonObject(String json) throws OneDriveException {
+    	try {
+	        JSONParser parser = new JSONParser();
+	        JSONObject root;
+	        root = (JSONObject) parser.parse(json);
+	        return root;
+    	} catch (ParseException e) {
+    		throw new OneDriveException(e);
+    	}
     }
 
     /**
@@ -233,7 +241,7 @@ public abstract class OneItem {
      * @throws IOException
      * @throws OneDriveException
      */
-    public boolean delete() throws IOException, OneDriveException {
+    public boolean delete() throws IOException {
         return this.api.deleteItem(this);
     }
 
@@ -342,7 +350,7 @@ public abstract class OneItem {
      * @throws IOException
      * @throws OneDriveException
      */
-    public OneFolder getParentFolder() throws IOException, OneDriveException {
+    public OneFolder getParentFolder() throws IOException {
         return api.getFolderById(this.parentReference.id);
     }
 
@@ -393,7 +401,7 @@ public abstract class OneItem {
      * @throws IOException
      * @throws OneDriveException
      */
-    public OneItem refreshItem() throws IOException, OneDriveException {
+    public OneItem refreshItem() throws IOException {
         if(this instanceof OneFile){
             return (OneItem) api.getFileById(id);
         } else {
@@ -427,7 +435,7 @@ public abstract class OneItem {
      * @throws ParseException
      * @throws InterruptedException
      */
-    public OneItem rename(OneFolder sourceFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneItem rename(OneFolder sourceFolder, String name) throws IOException {
         return api.rename(id, sourceFolder.getId(), name);
     }
 }

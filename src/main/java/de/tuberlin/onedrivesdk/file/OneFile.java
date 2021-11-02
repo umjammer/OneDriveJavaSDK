@@ -105,7 +105,7 @@ public interface OneFile {
      * @throws OneDriveException
      * @throws IOException
      */
-    OneFile refresh() throws OneDriveException, IOException;
+    OneFile refresh() throws IOException;
 
 
     /**
@@ -137,7 +137,7 @@ public interface OneFile {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getParentFolder() throws IOException, OneDriveException;
+    OneFolder getParentFolder() throws IOException;
 
     /**
      * Gets the URL that displays the resource in the browser.
@@ -170,7 +170,7 @@ public interface OneFile {
      * @throws OneDriveException
      * @throws IOException
      */
-    boolean delete() throws IOException, OneDriveException;
+    boolean delete() throws IOException;
 
 
     /**
@@ -183,7 +183,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws InterruptedException
      */
-    OneFile copy(OneFolder targetFolder) throws IOException, OneDriveException, ParseException, InterruptedException;
+    OneFile copy(OneFolder targetFolder) throws IOException;
 
     /**
      * Copy this file into the target folder.
@@ -196,7 +196,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws InterruptedException
      */
-    OneFile copy(OneFolder targetFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException;
+    OneFile copy(OneFolder targetFolder, String name) throws IOException;
 
     /**
      * Move this file into the target folder.
@@ -208,7 +208,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws IOException
      */
-    OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
+    OneItem move(OneFolder targetFolder) throws IOException;
 
     /**
      * Gets the raw JSON which is received from the OneDrive API.

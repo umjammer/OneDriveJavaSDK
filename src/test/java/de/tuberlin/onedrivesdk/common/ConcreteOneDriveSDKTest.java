@@ -123,7 +123,6 @@ public class ConcreteOneDriveSDKTest {
             api.getFileByPath("/File/Not/Found.txt");
             Assertions.fail();
         } catch (IOException e) {
-        } catch (OneDriveException e) {
         }
     }
 

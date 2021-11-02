@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.json.simple.parser.ParseException;
-
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
@@ -24,7 +22,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     private ConcreteOneFile() {
     }
 
-    public static ConcreteOneFile fromJSON(String json) throws ParseException, OneDriveException {
+    public static ConcreteOneFile fromJSON(String json) throws OneDriveException {
         return (ConcreteOneFile) OneItem.fromJSON(json).setRawJson(json);
     }
 
@@ -48,7 +46,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFile refresh() throws OneDriveException, IOException {
+    public OneFile refresh() throws IOException {
         return (OneFile) super.refreshItem();
     }
 
@@ -68,7 +66,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFolder getParentFolder() throws IOException, OneDriveException {
+    public OneFolder getParentFolder() throws IOException {
         return super.getParentFolder();
     }
 
@@ -83,17 +81,17 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFile copy(OneFolder targetFolder) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneFile copy(OneFolder targetFolder) throws IOException {
         return this.copy(targetFolder, null);
     }
 
     @Override
-    public OneFile copy(OneFolder targetFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneFile copy(OneFolder targetFolder, String name) throws IOException {
         return api.copy(id, targetFolder.getId(), name);
     }
 
     @Override
-    public OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
+    public OneItem move(OneFolder targetFolder) throws IOException {
         return api.move(id, targetFolder.getId());
     }
 }

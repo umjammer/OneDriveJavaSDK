@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.json.simple.parser.ParseException;
-
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConflictBehavior;
 import de.tuberlin.onedrivesdk.common.OneItem;
@@ -34,12 +32,12 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     private ConcreteOneFolder() {
     }
 
-    public static ConcreteOneFolder fromJSON(String json) throws ParseException, OneDriveException {
+    public static ConcreteOneFolder fromJSON(String json) throws OneDriveException {
         return (ConcreteOneFolder) OneItem.fromJSON(json).setRawJson(json);
     }
 
     @Override
-    public OneFolder getParentFolder() throws IOException, OneDriveException {
+    public OneFolder getParentFolder() throws IOException {
         return super.getParentFolder();
     }
 
@@ -54,32 +52,32 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     }
 
     @Override
-    public OneFolder refresh() throws OneDriveException, IOException {
+    public OneFolder refresh() throws IOException {
         return (OneFolder) super.refreshItem();
     }
 
     @Override
-    public List<OneFolder> getChildFolder() throws IOException, OneDriveException {
+    public List<OneFolder> getChildFolder() throws IOException {
         return api.getChildFolder(this);
     }
 
     @Override
-    public List<OneFile> getChildFiles() throws IOException, OneDriveException {
+    public List<OneFile> getChildFiles() throws IOException {
         return api.getChildFiles(this);
     }
 
     @Override
-    public List<OneItem> getChildren() throws IOException, OneDriveException {
+    public List<OneItem> getChildren() throws IOException {
         return api.getChildren(this, OneItemType.ALL);
     }
 
     @Override
-    public OneFolder createFolder(String name) throws IOException, OneDriveException {
+    public OneFolder createFolder(String name) throws IOException {
         return api.createFolder(this, name);
     }
 
     @Override
-    public OneFolder createFolder(String name, ConflictBehavior behavior) throws IOException, OneDriveException {
+    public OneFolder createFolder(String name, ConflictBehavior behavior) throws IOException {
         return api.createFolder(this, name, behavior);
     }
 
@@ -89,27 +87,27 @@ public class ConcreteOneFolder extends OneItem implements OneFolder {
     }
 
     @Override
-    public OneUploadFile uploadFile(File file) throws IOException, OneDriveException {
+    public OneUploadFile uploadFile(File file) throws IOException {
         return new ConcreteOneUploadFile(this, file, file.getName(), api);
     }
 
     @Override
-    public OneUploadFile uploadFile(File file, String filename) throws IOException, OneDriveException {
+    public OneUploadFile uploadFile(File file, String filename) throws IOException {
         return new ConcreteOneUploadFile(this, file, filename, api);
     }
 
     @Override
-    public OneUploadFile uploadFile(InputStream file, String filename) throws IOException, OneDriveException {
+    public OneUploadFile uploadFile(InputStream file, String filename) throws IOException {
         throw new UnsupportedOperationException("not implemented yet");
     }
 
     @Override
-    public OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException, OneDriveException {
+    public OneUpload upload(String filename, int size, Consumer<OneItem> finished) throws IOException {
         return new ConcreteOneUpload(this, filename, size, finished, api);
     }
 
     @Override
-    public OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
+    public OneItem move(OneFolder targetFolder) throws IOException {
         return api.move(id, targetFolder.getId());
     }
 

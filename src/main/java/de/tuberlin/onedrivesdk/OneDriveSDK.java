@@ -3,8 +3,6 @@ package de.tuberlin.onedrivesdk;
 import java.io.IOException;
 import java.util.List;
 
-import org.json.simple.parser.ParseException;
-
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.common.Subscription;
 import de.tuberlin.onedrivesdk.drive.OneDrive;
@@ -24,7 +22,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneDrive getDefaultDrive() throws IOException, OneDriveException;
+    OneDrive getDefaultDrive() throws IOException;
 
     /**
      * Gets drive by the specified drive id.
@@ -34,7 +32,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneDrive getDrive(String driveId) throws IOException, OneDriveException;
+    OneDrive getDrive(String driveId) throws IOException;
 
     /**
      * Gets all drives of the user.
@@ -43,7 +41,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    List<OneDrive> getAllDrives() throws IOException, OneDriveException;
+    List<OneDrive> getAllDrives() throws IOException;
 
     /**
      * Gets the root folder of the default drive.
@@ -52,7 +50,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getRootFolder() throws IOException, OneDriveException;
+    OneFolder getRootFolder() throws IOException;
 
     /**
      * Gets the root folder of the given dive.
@@ -62,7 +60,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getRootFolder(OneDrive drive) throws IOException, OneDriveException;
+    OneFolder getRootFolder(OneDrive drive) throws IOException;
 
 
     /**
@@ -73,7 +71,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getFolderById(String id) throws IOException, OneDriveException;
+    OneFolder getFolderById(String id) throws IOException;
 
 
     /**
@@ -84,7 +82,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getFolderByPath(String pathToFolder) throws IOException, OneDriveException;
+    OneFolder getFolderByPath(String pathToFolder) throws IOException;
 
 
     /**
@@ -95,7 +93,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileById(String id) throws IOException, OneDriveException;
+    OneFile getFileById(String id) throws IOException;
 
 
     /**
@@ -106,7 +104,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileByPath(String pathToFile) throws IOException, OneDriveException;
+    OneFile getFileByPath(String pathToFile) throws IOException;
 
 
     /**
@@ -118,7 +116,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException, OneDriveException;
+    OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException;
 
     /**
      * Gets file by path.
@@ -129,7 +127,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException, OneDriveException;
+    OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException;
 
     /**
      * Gets item by path.
@@ -139,14 +137,14 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneItem getItemByPath(String pathToFile) throws IOException, OneDriveException;
+    OneItem getItemByPath(String pathToFile) throws IOException;
 
     /**
      * @param url webhook url
      * @param clientState
      * @return Subscription
      */
-    Subscription subscribe(String url, String clientState) throws IOException, OneDriveException, ParseException, InterruptedException;
+    Subscription subscribe(String url, String clientState) throws IOException;
 
     /**
      * Used to authorize the session with the OAuth Response Code (used for first authentication)
@@ -155,7 +153,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    void authenticate(String oAuthCode) throws IOException, OneDriveException;
+    void authenticate(String oAuthCode) throws IOException;
 
     /**
      * Used to authorize the session with a RefreshToken
@@ -164,7 +162,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    void authenticateWithRefreshToken(String refreshToken) throws IOException, OneDriveException;
+    void authenticateWithRefreshToken(String refreshToken) throws IOException;
 
     /**
      * Returns the RefreshToken of the Current Session, if any exists and

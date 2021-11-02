@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,8 +21,7 @@ public class OneItemTest {
         try {
             OneItem.parseItemsFromJson(null);
             Assertions.fail();
-        } catch (org.json.simple.parser.ParseException e) {
-        } catch (OneDriveException e) {
+        } catch (IOException e) {
         } catch (NullPointerException e) {
         }
     }
@@ -32,8 +32,7 @@ public class OneItemTest {
         try {
             OneItem.fromJSON(null);
             Assertions.fail();
-        } catch (org.json.simple.parser.ParseException e) {
-        } catch (OneDriveException e) {
+        } catch (IOException e) {
         } catch (NullPointerException e) {
         }
     }
@@ -44,8 +43,6 @@ public class OneItemTest {
         OneItem folder = null;
         try {
             folder = OneItem.fromJSON(json);
-        } catch (org.json.simple.parser.ParseException e) {
-            Assertions.fail();
         } catch (OneDriveException e) {
             Assertions.fail();
         }
@@ -105,7 +102,7 @@ public class OneItemTest {
         try {
             items = OneItem.parseItemsFromJson(json, OneItemType.ALL);
             Assertions.fail();
-        } catch (OneDriveException | org.json.simple.parser.ParseException e) {
+        } catch (OneDriveException e) {
 
         } catch (Exception e){
             Assertions.fail(e.getMessage());
