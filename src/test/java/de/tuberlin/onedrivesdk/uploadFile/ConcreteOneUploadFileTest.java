@@ -1,9 +1,5 @@
 package de.tuberlin.onedrivesdk.uploadFile;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
-import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,11 +14,17 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
+
 public class ConcreteOneUploadFileTest {
 
 	public File fileToUploadPath;
 
-	ConcreteOneDriveSDK mockApi;
+    OneDriveSDK mockApi;
 
 	@Test
 	public void getNextRange() throws InstantiationException,
@@ -53,9 +55,9 @@ public class ConcreteOneUploadFileTest {
 
 		ConcreteOneFolder folder = makeMockFolder();
 		when(
-				mockApi.createUploadSession(any(ConcreteOneFolder.class),
+             mockApi.createUploadSession(any(OneFolder.class),
 						any(String.class))).thenReturn(upSession);
-		ConcreteOneUploadFile upload = new ConcreteOneUploadFile(folder,
+        OneUploadFile upload = new ConcreteOneUploadFile(folder,
 				fileToUploadPath, mockApi);
 		Mockito.verify(mockApi).createUploadSession(folder,
 				fileToUploadPath.getName());
@@ -83,7 +85,7 @@ public class ConcreteOneUploadFileTest {
 
 	@BeforeAll
 	public void createAPIMock() {
-		mockApi = mock(ConcreteOneDriveSDK.class);
+        mockApi = mock(OneDriveSDK.class);
 	}
 
 	public static Field getUnaccessableField(String fieldName, Class<?> clazz)

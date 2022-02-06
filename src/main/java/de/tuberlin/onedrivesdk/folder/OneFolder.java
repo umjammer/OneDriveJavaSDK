@@ -3,8 +3,8 @@ package de.tuberlin.onedrivesdk.folder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.json.simple.parser.ParseException;
@@ -56,7 +56,7 @@ public interface OneFolder {
      *
      * @return created by
      */
-    HashMap<String, DriveUser> getCreatedBy();
+    Map<String, DriveUser> getCreatedBy();
 
     /**
      * The creation timestamp of this folder.
@@ -70,7 +70,7 @@ public interface OneFolder {
      *
      * @return last modified
      */
-    HashMap<String, DriveUser> getLastModifiedBy();
+    Map<String, DriveUser> getLastModifiedBy();
 
     /**
      * The last modified timestamp of this folder.

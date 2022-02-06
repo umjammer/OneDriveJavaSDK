@@ -14,10 +14,10 @@ import com.google.gson.Gson;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
-import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
@@ -36,7 +36,7 @@ public class ConcreteOneUpload implements OneUpload {
 
     private static final Gson gson = new Gson();
 
-    private ConcreteOneDriveSDK api;
+    private OneDriveSDK api;
 
     private UploadSession uploadSession;
 
@@ -48,11 +48,11 @@ public class ConcreteOneUpload implements OneUpload {
 
     private String uploadUrl;
 
-    public ConcreteOneUpload(ConcreteOneFolder parentFolder,
+    public ConcreteOneUpload(OneFolder parentFolder,
             String filename,
             long size,
             Consumer<OneItem> finished,
-            ConcreteOneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+            OneDriveSDK api) throws IOException, OneDriveAuthenticationException {
         checkNotNull(parentFolder);
         this.api = checkNotNull(api);
         this.size = size;

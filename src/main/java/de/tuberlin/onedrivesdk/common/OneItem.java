@@ -1,36 +1,43 @@
 package de.tuberlin.onedrivesdk.common;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.drive.DriveUser;
-import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TimeZone;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.drive.DriveUser;
+import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
 
 /**
  * The root class of all files and folder types that can be accessed through this sdk.
  */
 public abstract class OneItem {
 
+    private static final Logger logger = LogManager.getLogger(OneItem.class);
+
     /**
      * The SDK object.
      */
-    protected ConcreteOneDriveSDK api;
+    protected OneDriveSDK api;
 
     /**
      * The OneDrive id of the resource.
@@ -45,7 +52,7 @@ public abstract class OneItem {
     /**
      * The created by reference. Possible keys are 'user', 'application' and 'device'.
      */
-    protected HashMap<String, DriveUser> createdBy = new HashMap<>();
+    protected Map<String, DriveUser> createdBy = new HashMap<>();
 
     /**
      * The creation timestamp of this item.
@@ -55,7 +62,7 @@ public abstract class OneItem {
     /**
      * The modified by reference. Possible keys are 'user', 'application' and 'device'.
      */
-    protected HashMap<String, DriveUser> lastModifiedBy = new HashMap<>();
+    protected Map<String, DriveUser> lastModifiedBy = new HashMap<>();
 
     /**
      * The last modified timestamp of this item.
@@ -103,6 +110,9 @@ public abstract class OneItem {
      */
     private long lastRefresh;
 
+    /** */
+    private static Gson gson = new Gson();
+
     /**
      * Parse a OneItem object from JSON.
      *
@@ -112,23 +122,22 @@ public abstract class OneItem {
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
     public static OneItem fromJSON(String json) throws OneDriveException {
-    	try {
-	        JSONObject root = getJsonObject(json);
-	
-	        OneDriveError error;
-	        if ((error = OneDriveError.parseError(json)) != null) {
-	            throw new OneDriveException(error.toString());
-	        }
-	
-	        Gson gson = new Gson();
-	        if (root.containsKey("file")) {
-	            return gson.fromJson(json, ConcreteOneFile.class).setLastRefresh(System.currentTimeMillis());
-	        } else {
-	            return gson.fromJson(json, ConcreteOneFolder.class).setLastRefresh(System.currentTimeMillis());
-	        }
-    	} catch (ParseException e) {
-    		throw new OneDriveException("API - response could not be processed", e);
-    	}
+        try {
+            JSONObject root = getJsonObject(json);
+
+            OneDriveError error;
+            if ((error = OneDriveError.parseError(json)) != null) {
+                throw new OneDriveException(error.toString());
+            }
+
+            if (root.containsKey("file")) {
+                return gson.fromJson(json, ConcreteOneFile.class).setLastRefresh(System.currentTimeMillis());
+            } else {
+                return gson.fromJson(json, ConcreteOneFolder.class).setLastRefresh(System.currentTimeMillis());
+            }
+        } catch (ParseException e) {
+            throw new OneDriveException("API - response could not be processed", e);
+        }
     }
 
     /**
@@ -173,8 +182,8 @@ public abstract class OneItem {
                         break;
                     case ALL:
                         itemList.add(item);
+                        break;
                 }
-
             }
         } else {
             throw new OneDriveException("Cannot parse items from JSON. Missing argument 'value'.");
@@ -191,14 +200,14 @@ public abstract class OneItem {
      * @throws ParseException if the JSON can not be parsed
      */
     private static JSONObject getJsonObject(String json) throws OneDriveException {
-    	try {
-	        JSONParser parser = new JSONParser();
-	        JSONObject root;
-	        root = (JSONObject) parser.parse(json);
-	        return root;
-    	} catch (ParseException e) {
-    		throw new OneDriveException(e);
-    	}
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject root;
+            root = (JSONObject) parser.parse(json);
+            return root;
+        } catch (ParseException e) {
+            throw new OneDriveException(e);
+        }
     }
 
     /**
@@ -217,7 +226,7 @@ public abstract class OneItem {
      * @return the identity
      * @throws OneDriveException if the api is null
      */
-    public OneItem setApi(ConcreteOneDriveSDK api) throws OneDriveException {
+    public OneItem setApi(OneDriveSDK api) throws OneDriveException {
         if (api == null) {
             throw new OneDriveException("The provided api object can not be null!");
         }
@@ -268,7 +277,7 @@ public abstract class OneItem {
      *
      * @return created by
      */
-    public HashMap<String, DriveUser> getCreatedBy() {
+    public Map<String, DriveUser> getCreatedBy() {
         return this.createdBy;
     }
 
@@ -279,10 +288,13 @@ public abstract class OneItem {
      */
     public long getCreatedDateTime() {
         try {
-            return this.parseTimestamp(this.createdDateTime).getTime() / 1000;
-        } catch (java.text.ParseException e) {
-            return 0;
+            if (createdDateTime != null) {
+                return LocalDateTime.parse(createdDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
+            }
+        } catch (DateTimeParseException e) {
+logger.warn(e.getMessage() + " " + createdDateTime);
         }
+        return 0;
     }
 
     /**
@@ -290,7 +302,7 @@ public abstract class OneItem {
      *
      * @return last modified by
      */
-    public HashMap<String, DriveUser> getLastModifiedBy() {
+    public Map<String, DriveUser> getLastModifiedBy() {
         return this.lastModifiedBy;
     }
 
@@ -301,28 +313,13 @@ public abstract class OneItem {
      */
     public long getLastModifiedDateTime() {
         try {
-            return this.parseTimestamp(this.lastModifiedDateTime).getTime() / 1000;
-        } catch (java.text.ParseException e) {
-            return 0;
+            if (lastModifiedDateTime != null) {
+                return LocalDateTime.parse(lastModifiedDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
+            }
+        } catch (DateTimeParseException e) {
+logger.warn(e.getMessage() + " " + lastModifiedDateTime);
         }
-    }
-
-    /**
-     * Parse a timestamp.
-     *
-     * @param dateTime Format: 0000-00-00T00:00:00
-     * @return timestamp
-     * @throws java.text.ParseException if the date can not be parsed
-     */
-    private Date parseTimestamp(String dateTime) throws java.text.ParseException {
-        if (dateTime != null && dateTime.indexOf('.') != -1) {
-            dateTime = dateTime.substring(0, dateTime.indexOf('.'));
-            DateFormat df = new SimpleDateFormat("y-M-d'T'H:m:s");
-            df.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return df.parse(dateTime);
-        } else {
-            throw new java.text.ParseException(dateTime, -1);
-        }
+        return 0;
     }
 
     /**

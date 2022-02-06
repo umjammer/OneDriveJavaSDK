@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
@@ -21,10 +21,10 @@ import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
  */
 public class ConcreteOneDownload implements OneDownload {
 
-    private final ConcreteOneFile metadata;
-    private final ConcreteOneDriveSDK api;
+    private final OneFile metadata;
+    private final OneDriveSDK api;
 
-    public ConcreteOneDownload(ConcreteOneFile metadata, ConcreteOneDriveSDK api) throws FileNotFoundException {
+    public ConcreteOneDownload(ConcreteOneFile metadata, OneDriveSDK api) throws FileNotFoundException {
         this.metadata = metadata;
         this.api = api;
     }

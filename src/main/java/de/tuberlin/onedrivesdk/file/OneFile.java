@@ -3,7 +3,7 @@ package de.tuberlin.onedrivesdk.file;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.json.simple.parser.ParseException;
 
@@ -67,7 +67,7 @@ public interface OneFile {
      *
      * @return created by
      */
-    HashMap<String, DriveUser> getCreatedBy();
+    Map<String, DriveUser> getCreatedBy();
 
     /**
      * The creation timestamp of this file in unix format.
@@ -82,7 +82,7 @@ public interface OneFile {
      *
      * @return last modified by
      */
-    HashMap<String, DriveUser> getLastModifiedBy();
+    Map<String, DriveUser> getLastModifiedBy();
 
     /**
      * The last modified timestamp of this file.

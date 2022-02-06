@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownloadFile;
@@ -20,10 +19,6 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     private FileProperty file;
 
     private ConcreteOneFile() {
-    }
-
-    public static ConcreteOneFile fromJSON(String json) throws OneDriveException {
-        return (ConcreteOneFile) OneItem.fromJSON(json).setRawJson(json);
     }
 
     @Override
