@@ -9,6 +9,8 @@ import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.common.TestSDKFactory;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,25 +22,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConcreteOneDownloadIntegrationTest {
 
-	@Test
+    @Test
+    @Disabled("do integration test on project vavi-nio-file-onedrive")
     public void simpleDownloadTest() throws InstantiationException,
             IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException, IOException, InterruptedException {
-		OneDriveSDK api = TestSDKFactory.getInstance();
+            InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException, IOException, InterruptedException {
+        OneDriveSDK api = TestSDKFactory.getInstance();
 
-		OneFolder folder = api.getFolderByPath("/IntegrationTesting/FolderForDownload");
-		List<OneFile> files = folder.getChildFiles();
+        OneFolder folder = api.getFolderByPath("/IntegrationTesting/FolderForDownload");
+        List<OneFile> files = folder.getChildFiles();
 
 
-		for (OneFile file : files){
-			File localCopy = File.createTempFile(file.getName(), ".bin");
+        for (OneFile file : files){
+            File localCopy = File.createTempFile(file.getName(), ".bin");
 
-			OneDownloadFile f = file.download(localCopy);
-			f.startDownload();
+            OneDownloadFile f = file.download(localCopy);
+            f.startDownload();
 
-			HashCode code = Files.hash(localCopy, Hashing.sha1());
+            @SuppressWarnings("deprecation")
+            HashCode code = Files.hash(localCopy, Hashing.sha1());
             assertEquals(file.getName() + " mismatch", code.toString().toUpperCase(), file.getSHA1Hash());
         }
-	}
-
+    }
 }
