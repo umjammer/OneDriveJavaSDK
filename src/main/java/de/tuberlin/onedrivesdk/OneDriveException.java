@@ -1,10 +1,12 @@
 package de.tuberlin.onedrivesdk;
 
+import java.io.IOException;
+
 /**
  * Exception that can be thrown on all API calls,
  * mostly JSON error responses from the oneDrive server
  */
-public class OneDriveException extends Exception {
+public class OneDriveException extends IOException {
 
     public OneDriveException(String msg, Throwable reason) {
         super(msg, reason);
@@ -14,4 +16,7 @@ public class OneDriveException extends Exception {
         super(msg);
     }
 
+    public OneDriveException(Throwable cause) {
+        super(cause);
+    }
 }

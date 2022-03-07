@@ -1,17 +1,19 @@
 package de.tuberlin.onedrivesdk.file;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
-import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
-import de.tuberlin.onedrivesdk.drive.DriveUser;
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
+
+import org.json.simple.parser.ParseException;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
+import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
+import de.tuberlin.onedrivesdk.drive.DriveUser;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+
 /**
  * This Interface provides all Methods to handle a File
  *
@@ -65,7 +67,7 @@ public interface OneFile {
      *
      * @return created by
      */
-    HashMap<String, DriveUser> getCreatedBy();
+    Map<String, DriveUser> getCreatedBy();
 
     /**
      * The creation timestamp of this file in unix format.
@@ -80,7 +82,7 @@ public interface OneFile {
      *
      * @return last modified by
      */
-    HashMap<String, DriveUser> getLastModifiedBy();
+    Map<String, DriveUser> getLastModifiedBy();
 
     /**
      * The last modified timestamp of this file.
@@ -103,7 +105,7 @@ public interface OneFile {
      * @throws OneDriveException
      * @throws IOException
      */
-    OneFile refresh() throws OneDriveException, IOException;
+    OneFile refresh() throws IOException;
 
 
     /**
@@ -135,7 +137,7 @@ public interface OneFile {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getParentFolder() throws IOException, OneDriveException;
+    OneFolder getParentFolder() throws IOException;
 
     /**
      * Gets the URL that displays the resource in the browser.
@@ -168,7 +170,7 @@ public interface OneFile {
      * @throws OneDriveException
      * @throws IOException
      */
-    boolean delete() throws IOException, OneDriveException;
+    boolean delete() throws IOException;
 
 
     /**
@@ -181,7 +183,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws InterruptedException
      */
-    OneFile copy(OneFolder targetFolder) throws IOException, OneDriveException, ParseException, InterruptedException;
+    OneFile copy(OneFolder targetFolder) throws IOException;
 
     /**
      * Copy this file into the target folder.
@@ -194,7 +196,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws InterruptedException
      */
-    OneFile copy(OneFolder targetFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException;
+    OneFile copy(OneFolder targetFolder, String name) throws IOException;
 
     /**
      * Move this file into the target folder.
@@ -206,7 +208,7 @@ public interface OneFile {
      * @throws ParseException
      * @throws IOException
      */
-    OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException;
+    OneItem move(OneFolder targetFolder) throws IOException;
 
     /**
      * Gets the raw JSON which is received from the OneDrive API.

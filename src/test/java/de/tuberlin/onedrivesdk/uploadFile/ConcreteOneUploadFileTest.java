@@ -1,112 +1,113 @@
 package de.tuberlin.onedrivesdk.uploadFile;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
-import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
-import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import de.tuberlin.onedrivesdk.OneDriveException;
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 
 public class ConcreteOneUploadFileTest {
 
-	public File fileToUploadPath;
+    File fileToUploadPath;
 
-	ConcreteOneDriveSDK mockApi;
+    OneDriveSDK mockApi;
 
-	@Test
-	public void getNextRange() throws InstantiationException,
-			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException {
+    @Test
+    public void getNextRange() throws InstantiationException,
+            IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException {
 
-		UploadSession upSession = getEmptyUploadSession();
-		
-		String[] nextRanges = {"1435-","16843-65786","547547-65756"};
-		getUnaccessableField("nextExpectedRanges", UploadSession.class).set(upSession, nextRanges);
-		
-		assertEquals(1435L, upSession.getNextRange());
-		
+        UploadSession upSession = getEmptyUploadSession();
 
-	}
+        String[] nextRanges = {"1435-","16843-65786","547547-65756"};
+        getUnaccessableField("nextExpectedRanges", UploadSession.class).set(upSession, nextRanges);
 
-	@Test
-	public void testCreateUploadSession() throws InstantiationException,
-			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException,
-			SecurityException, NoSuchFieldException, ClassNotFoundException, IOException,OneDriveAuthenticationException {
-		
-		UploadSession upSession = getEmptyUploadSession();
+        assertEquals(1435L, upSession.getNextRange());
+    }
 
-		
-		getUnaccessableField("uploadUrl", UploadSession.class).set(upSession,
-				"asifsdiurt");
+    @Test
+    public void testCreateUploadSession() throws InstantiationException,
+            IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException,
+            SecurityException, NoSuchFieldException, ClassNotFoundException, IOException,OneDriveAuthenticationException {
 
-		ConcreteOneFolder folder = makeMockFolder();
-		when(
-				mockApi.createUploadSession(any(ConcreteOneFolder.class),
-						any(String.class))).thenReturn(upSession);
-		ConcreteOneUploadFile upload = new ConcreteOneUploadFile(folder,
-				fileToUploadPath, mockApi);
-		Mockito.verify(mockApi).createUploadSession(folder,
-				fileToUploadPath.getName());
-		assertEquals("asifsdiurt",
-				getUnaccessableField("uploadUrl", ConcreteOneUploadFile.class)
-						.get(upload));
+        UploadSession upSession = getEmptyUploadSession();
 
-	}
 
-	public static ConcreteOneFolder makeMockFolder() {
-		ConcreteOneFolder folder = mock(ConcreteOneFolder.class);
-		when(folder.getId()).thenReturn("aiusgtffgso8745whfirstgu");
-		return folder;
-	}
+        getUnaccessableField("uploadUrl", UploadSession.class).set(upSession,
+                "asifsdiurt");
 
-	@AfterAll
-	public void removeTestFile() {
-		fileToUploadPath.delete();
-	}
+        ConcreteOneFolder folder = makeMockFolder();
+        when(
+             mockApi.createUploadSession(any(OneFolder.class),
+                                         any(String.class))).thenReturn(upSession);
+        OneUploadFile upload = new ConcreteOneUploadFile(folder,
+                                                                 fileToUploadPath, mockApi);
+        Mockito.verify(mockApi).createUploadSession(folder,
+                                                    fileToUploadPath.getName());
+        assertEquals("asifsdiurt",
+                     getUnaccessableField("uploadUrl", ConcreteOneUploadFile.class)
+                     .get(upload));
 
-	@BeforeAll
-	public void createTestFile() throws IOException {
-		fileToUploadPath = File.createTempFile("TestOneSDKFile", "txt");
-	}
+    }
 
-	@BeforeAll
-	public void createAPIMock() {
-		mockApi = mock(ConcreteOneDriveSDK.class);
-	}
+    public static ConcreteOneFolder makeMockFolder() {
+        ConcreteOneFolder folder = mock(ConcreteOneFolder.class);
+        when(folder.getId()).thenReturn("aiusgtffgso8745whfirstgu");
+        return folder;
+    }
 
-	public static Field getUnaccessableField(String fieldName, Class<?> clazz)
-			throws NoSuchFieldException, SecurityException,
-			IllegalArgumentException, IllegalAccessException {
+    @AfterEach
+    public void removeTestFile() {
+        fileToUploadPath.delete();
+    }
 
-		Field privateField = clazz.getDeclaredField(fieldName);
+    @BeforeEach
+    public void createTestFile() throws IOException {
+        fileToUploadPath = File.createTempFile("TestOneSDKFile", "txt");
+    }
 
-		privateField.setAccessible(true);
+    @BeforeEach
+    public void createAPIMock() {
+        mockApi = mock(OneDriveSDK.class);
+    }
 
-		return privateField;
+    public static Field getUnaccessableField(String fieldName, Class<?> clazz) throws NoSuchFieldException,
+                                                                               SecurityException,
+                                                                               IllegalArgumentException,
+                                                                               IllegalAccessException {
 
-	}
-	
-	private static UploadSession getEmptyUploadSession() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		// get constructor that takes a String as argument
-				Constructor<UploadSession> constructor = (Constructor<UploadSession>) UploadSession.class
-						.getDeclaredConstructors()[0];
-				constructor.setAccessible(true);
-				UploadSession upSession = constructor.newInstance();
-				
-				return upSession;
+        Field privateField = clazz.getDeclaredField(fieldName);
 
-	}
+        privateField.setAccessible(true);
 
+        return privateField;
+    }
+
+    private static UploadSession getEmptyUploadSession() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        // get constructor that takes a String as argument
+        @SuppressWarnings("unchecked")
+        Constructor<UploadSession> constructor = (Constructor<UploadSession>) UploadSession.class
+                .getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+        UploadSession upSession = constructor.newInstance();
+
+        return upSession;
+    }
 }

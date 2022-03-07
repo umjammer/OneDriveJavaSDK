@@ -399,7 +399,7 @@ public class OneDriveSession implements Runnable {
     }
 
     private List<OneDriveSDK.Callback> callbacks;
-    
+
     public void startRefreshThread(OneDriveSDK.Callback... callbacks) {
         if (this.refreshThread == null) {
             this.callbacks = Arrays.asList(callbacks);

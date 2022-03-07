@@ -1,13 +1,22 @@
 package de.tuberlin.onedrivesdk;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import de.tuberlin.onedrivesdk.common.ConflictBehavior;
 import de.tuberlin.onedrivesdk.common.OneItem;
+import de.tuberlin.onedrivesdk.common.OneItemType;
+import de.tuberlin.onedrivesdk.common.Subscription;
 import de.tuberlin.onedrivesdk.drive.OneDrive;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
+import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import de.tuberlin.onedrivesdk.networking.OneDriveSession;
+import de.tuberlin.onedrivesdk.networking.OneResponse;
+import de.tuberlin.onedrivesdk.networking.PreparedRequest;
+import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
+import de.tuberlin.onedrivesdk.uploadFile.UploadSession;
 
 /**
  * This interface provides the functionality of the OneDrive API.
@@ -21,7 +30,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneDrive getDefaultDrive() throws IOException, OneDriveException;
+    OneDrive getDefaultDrive() throws IOException;
 
     /**
      * Gets drive by the specified drive id.
@@ -31,7 +40,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneDrive getDrive(String driveId) throws IOException, OneDriveException;
+    OneDrive getDrive(String driveId) throws IOException;
 
     /**
      * Gets all drives of the user.
@@ -40,7 +49,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    List<OneDrive> getAllDrives() throws IOException, OneDriveException;
+    List<OneDrive> getAllDrives() throws IOException;
 
     /**
      * Gets the root folder of the default drive.
@@ -49,7 +58,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getRootFolder() throws IOException, OneDriveException;
+    OneFolder getRootFolder() throws IOException;
 
     /**
      * Gets the root folder of the given dive.
@@ -59,7 +68,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getRootFolder(OneDrive drive) throws IOException, OneDriveException;
+    OneFolder getRootFolder(OneDrive drive) throws IOException;
 
 
     /**
@@ -70,7 +79,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getFolderById(String id) throws IOException, OneDriveException;
+    OneFolder getFolderById(String id) throws IOException;
 
 
     /**
@@ -81,7 +90,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getFolderByPath(String pathToFolder) throws IOException, OneDriveException;
+    OneFolder getFolderByPath(String pathToFolder) throws IOException;
 
 
     /**
@@ -92,7 +101,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileById(String id) throws IOException, OneDriveException;
+    OneFile getFileById(String id) throws IOException;
 
 
     /**
@@ -103,7 +112,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileByPath(String pathToFile) throws IOException, OneDriveException;
+    OneFile getFileByPath(String pathToFile) throws IOException;
 
 
     /**
@@ -115,7 +124,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException, OneDriveException;
+    OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException;
 
     /**
      * Gets file by path.
@@ -126,7 +135,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException, OneDriveException;
+    OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException;
 
     /**
      * Gets item by path.
@@ -136,7 +145,14 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    OneItem getItemByPath(String pathToFile) throws IOException, OneDriveException;
+    OneItem getItemByPath(String pathToFile) throws IOException;
+
+    /**
+     * @param url webhook url
+     * @param clientState
+     * @return Subscription
+     */
+    Subscription subscribe(String url, String clientState) throws IOException;
 
     /**
      * Used to authorize the session with the OAuth Response Code (used for first authentication)
@@ -145,7 +161,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    void authenticate(String oAuthCode) throws IOException, OneDriveException;
+    void authenticate(String oAuthCode) throws IOException;
 
     /**
      * Used to authorize the session with a RefreshToken
@@ -154,7 +170,7 @@ public interface OneDriveSDK {
      * @throws IOException
      * @throws OneDriveException
      */
-    void authenticateWithRefreshToken(String refreshToken) throws IOException, OneDriveException;
+    void authenticateWithRefreshToken(String refreshToken) throws IOException;
 
     /**
      * Returns the RefreshToken of the Current Session, if any exists and
@@ -200,4 +216,148 @@ public interface OneDriveSDK {
     interface Callback {
         void exec();
     }
+
+    /**
+     * Deletes a OneDriveItem form OneDrive.
+     *
+     * @param oneItem to delete
+     * @return true on success
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    boolean deleteItem(OneItem oneItem) throws IOException;
+
+    /**
+     * Rename a file in OneDrive to a location in OneDrive.
+     *
+     * @param id OneDrive item id of the file to be copied
+     * @param parentId id of the source folder
+     * @param newName the new name of the copied file
+     * @return OneItem the renamed item
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneItem rename(String id, String id2, String name) throws IOException;
+
+    /**
+     * Download a file from OneDrive by id and returns the byte[].
+     *
+     * @param fileID the OneDrive file id
+     * @return byte[]
+     * @throws OneDriveAuthenticationException
+     */
+    byte[] download(String id) throws IOException;
+
+    /**
+     * Download a file from OneDrive by id and returns the InputStream.
+     *
+     * @param fileID the OneDrive file id
+     * @return InputStream
+     * @throws OneDriveAuthenticationException
+     */
+    InputStream downloadAsStream(String id) throws IOException;
+
+    /**
+     * Copy and rename a file in OneDrive to a location in OneDrive.
+     *
+     * @param id            OneDrive item id of the file to be copied
+     * @param destinationId id of the target folder
+     * @param newName       the new name of the copied file
+     * @return OneFile the copied file
+     * @throws IOException
+     */
+    OneFile copy(String id, String id2, String name) throws IOException;
+
+    /**
+     * Move a file in OneDrive.
+     *
+     * @param id            OneDrive item id of the file to be moved
+     * @param destinationId id of the target folder
+     * @return OneItem
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneItem move(String id, String id2) throws IOException;
+
+    /**
+     * Create a new upload session in preparation of a file upload.
+     *
+     * @param folder   on OneDrive
+     * @param fileName on OneDrive
+     * @return UploadSession
+     * @throws IOException
+     */
+    UploadSession createUploadSession(OneFolder parentFolder, String filename) throws IOException;
+
+    /**
+     * Perform the HTTP request to the OneDrive API.
+     *
+     * @param preparedRequest
+     * @return OneResponse
+     * @throws IOException
+     */
+    OneResponse makeRequest(PreparedRequest request) throws IOException;
+
+    /**
+     * Perform the HTTP request to the OneDrive API with a json body.
+     *
+     * @param url
+     * @param method
+     * @param json   body of the request
+     * @return OneResponse
+     * @throws IOException
+     */
+    OneResponse makeRequest(String uploadUrl, PreparedRequestMethod get, String json) throws IOException;
+
+    /**
+     * Gets all child folder of the specified folder.
+     *
+     * @param concreteOneFolder
+     * @return children
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    List<OneFolder> getChildFolder(OneFolder concreteOneFolder) throws IOException;
+
+    /**
+     * Gets all child files of the specified folder.
+     *
+     * @param concreteOneFolder
+     * @return children
+     * @throws OneDriveException
+     */
+    List<OneFile> getChildFiles(OneFolder concreteOneFolder) throws IOException;
+
+    /**
+     * Gets all children of the given folder depending on the type.
+     *
+     * @param concreteOneFolder
+     * @param type
+     * @return children
+     * @throws OneDriveException
+     */
+    List<OneItem> getChildren(OneFolder concreteOneFolder, OneItemType all) throws IOException;
+
+    /**
+     * Create a new folder in OneDrive.
+     *
+     * @param folder the parent folder
+     * @param name   name of the new folder
+     * @return OneFolder the newly created folder
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneFolder createFolder(OneFolder concreteOneFolder, String name) throws IOException;
+
+    /**
+     * Create a new folder in OneDrive and define the behavior on folder name conflict.
+     *
+     * @param folder   the parent folder
+     * @param name
+     * @param behavior
+     * @return OneFolder the newly created folder
+     * @throws IOException
+     * @throws OneDriveException
+     */
+    OneFolder createFolder(OneFolder concreteOneFolder, String name, ConflictBehavior behavior) throws IOException;
 }

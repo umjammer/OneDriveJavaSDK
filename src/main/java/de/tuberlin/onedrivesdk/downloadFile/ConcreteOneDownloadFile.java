@@ -1,16 +1,17 @@
 package de.tuberlin.onedrivesdk.downloadFile;
 
-import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
-import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
-import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.tuberlin.onedrivesdk.OneDriveSDK;
+import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
+import de.tuberlin.onedrivesdk.file.OneFile;
+import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 
 /**
  * Implementation of OneDownloadFile
@@ -20,11 +21,11 @@ public class ConcreteOneDownloadFile implements OneDownloadFile {
 
     private static final Logger logger = LogManager.getLogger(ConcreteOneDownloadFile.class);
 
-    private final ConcreteOneFile metadata;
-    private final ConcreteOneDriveSDK api;
+    private final OneFile metadata;
+    private final OneDriveSDK api;
     private final File destinationFile;
 
-    public ConcreteOneDownloadFile(ConcreteOneFile metadata, ConcreteOneDriveSDK api, File destinationFile) throws FileNotFoundException {
+    public ConcreteOneDownloadFile(ConcreteOneFile metadata, OneDriveSDK api, File destinationFile) throws FileNotFoundException {
         this.metadata = metadata;
         this.api = api;
         this.destinationFile = destinationFile;

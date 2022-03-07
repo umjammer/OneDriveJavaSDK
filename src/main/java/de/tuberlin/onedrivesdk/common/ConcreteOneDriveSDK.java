@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,10 +20,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -38,13 +36,17 @@ import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
 import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
 import de.tuberlin.onedrivesdk.uploadFile.UploadSession;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
  * This class provides the functionality to authenticate to OneDrive and handles the communication.
  */
 public class ConcreteOneDriveSDK implements OneDriveSDK {
-    @SuppressWarnings("unused")
+
     private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
     private static final Gson gson = new Gson();
 
@@ -58,9 +60,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      */
     private ConcreteOneDriveSDK(OneDriveSession session) {
         this.session = session;
-
     }
-
 
     /**
      * Instantiates a new ConcreteOneDriveSDK.
@@ -74,6 +74,9 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         OkHttpClient cli = new OkHttpClient().newBuilder()
             .followRedirects(false)
             .followSslRedirects(false)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build();
         OneDriveSession session = OneDriveSession.initializeSession(cli, clientId, clientSecret,redirect_uri, scopes);
         return new ConcreteOneDriveSDK(session);
@@ -90,11 +93,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.GET);
         String json = this.makeRequest(request).getBodyAsString();
         List<OneDrive> drives = null;
-        try {
-            drives = ConcreteOneDrive.parseDrivesFromJson(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        drives = ConcreteOneDrive.parseDrivesFromJson(json);
 
         for (OneDrive drive : drives) {
             ((ConcreteOneDrive)drive).setApi(this);
@@ -104,7 +103,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneDrive getDefaultDrive() throws IOException, OneDriveException {
+    public OneDrive getDefaultDrive() throws IOException {
         String requestURL = "drive/";
 
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.GET);
@@ -112,18 +111,14 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         String json = this.makeRequest(request).getBodyAsString();
 
         ConcreteOneDrive oneDrive = null;
-        try {
-            oneDrive = ConcreteOneDrive.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        oneDrive = ConcreteOneDrive.fromJSON(json);
         oneDrive.setApi(this);
 
         return oneDrive;
     }
 
     @Override
-    public OneDrive getDrive(String driveId) throws IOException, OneDriveException {
+    public OneDrive getDrive(String driveId) throws IOException {
         String requestURL = "drives/%s";
 
         PreparedRequest request = new PreparedRequest(String.format(requestURL, driveId), PreparedRequestMethod.GET);
@@ -131,11 +126,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         String json = this.makeRequest(request).getBodyAsString();
 
         ConcreteOneDrive oneDrive = null;
-        try {
-            oneDrive = ConcreteOneDrive.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        oneDrive = ConcreteOneDrive.fromJSON(json);
         oneDrive.setApi(this);
 
         return oneDrive;
@@ -149,18 +140,14 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String json = this.makeRequest(request).getBodyAsString();
         ConcreteOneFolder oneFolder = null;
-        try {
-            oneFolder = ConcreteOneFolder.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
     }
 
     @Override
-    public OneFolder getFolderByPath(String pathToFolder) throws IOException, OneDriveException {
+    public OneFolder getFolderByPath(String pathToFolder) throws IOException {
         return getFolderByPath(pathToFolder, null);
     }
 
@@ -170,7 +157,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFolder getRootFolder(OneDrive drive) throws IOException, OneDriveException {
+    public OneFolder getRootFolder(OneDrive drive) throws IOException {
         PreparedRequest request;
         if (drive == null) {
             request = new PreparedRequest("drive/root", PreparedRequestMethod.GET);
@@ -181,11 +168,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         String json = this.makeRequest(request).getBodyAsString();
 
         ConcreteOneFolder oneFolder = null;
-        try {
-            oneFolder = ConcreteOneFolder.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
@@ -198,14 +181,10 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(String.format(requestURL, id), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        ConcreteOneFile file = null;
-        try {
-            file = ConcreteOneFile.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        OneItem file = null;
+        file = OneItem.fromJSON(json);
         file.setApi(this);
-        return file;
+        return (OneFile) file;
     }
 
     @Override
@@ -214,7 +193,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException, OneDriveException {
+    public OneFolder getFolderByPath(String pathToFolder, OneDrive drive) throws IOException {
 
         String requestURL = (drive == null) ? "drive" : String.format("drives/%s", drive.getId());
         requestURL += "/%s";
@@ -223,41 +202,33 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String json = this.makeRequest(request).getBodyAsString();
         ConcreteOneFolder oneFolder = null;
-        try {
-            oneFolder = ConcreteOneFolder.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
     }
 
     @Override
-    public OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException, OneDriveException {
+    public OneFile getFileByPath(String pathToFile, OneDrive drive) throws IOException {
         String requestURL = (drive == null) ? "drive" : String.format("drives/%s", drive.getId());
         requestURL += "/%s";
 
         PreparedRequest request = new PreparedRequest(String.format(requestURL, this.convertPathToApiPath(pathToFile)), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        ConcreteOneFile file = null;
-        try {
-            file = ConcreteOneFile.fromJSON(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        OneItem file = null;
+        file = OneItem.fromJSON(json);
         file.setApi(this);
 
-        return file;
+        return (OneFile) file;
     }
 
     @Override
-    public OneItem getItemByPath(String pathToFile) throws IOException, OneDriveException {
+    public OneItem getItemByPath(String pathToFile) throws IOException {
         return getItemByPath(pathToFile, null);
     }
 
-    public OneItem getItemByPath(String pathToFile, OneDrive drive) throws IOException, OneDriveException {
+    public OneItem getItemByPath(String pathToFile, OneDrive drive) throws IOException {
         String requestURL = (drive == null) ? "drive" : String.format("drives/%s", drive.getId());
         requestURL += "/%s";
 
@@ -265,11 +236,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String json = this.makeRequest(request).getBodyAsString();
         OneItem item = null;
-        try {
-            item = OneItem.fromJSON(json).setRawJson(json);
-        } catch (ParseException e) {
-            throw new OneDriveException("API - response could not be processed", e);
-        }
+        item = OneItem.fromJSON(json).setRawJson(json);
         item.setApi(this);
 
         return item;
@@ -281,7 +248,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public void authenticateWithRefreshToken(String refreshToken) throws IOException, OneDriveException {
+    public void authenticateWithRefreshToken(String refreshToken) throws IOException {
         OneDriveSession.refreshSession(this.session, refreshToken);
     }
 
@@ -309,16 +276,9 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return session.isAuthenticated();
     }
 
-    /**
-     * Create a new upload session in preparation of a file upload.
-     *
-     * @param folder   on OneDrive
-     * @param fileName on OneDrive
-     * @return UploadSession
-     * @throws IOException
-     */
-    public UploadSession createUploadSession(ConcreteOneFolder folder,
-                                             String fileName) throws IOException, OneDriveAuthenticationException {
+    @Override
+    public UploadSession createUploadSession(OneFolder folder,
+                                             String fileName) throws IOException {
         String requestURL = "drive/items/%s:/%s:/upload.createSession";
 
         String url = String.format(requestURL, folder.getId(), fileName);
@@ -330,16 +290,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return gson.fromJson(json, UploadSession.class);
     }
 
-    /**
-     * Gets all children of the given folder depending on the type.
-     *
-     * @param concreteOneFolder
-     * @param type
-     * @return children
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public List<OneItem> getChildren(ConcreteOneFolder concreteOneFolder, OneItemType type) throws IOException, OneDriveException {
+    @Override
+    public List<OneItem> getChildren(OneFolder concreteOneFolder, OneItemType type) throws IOException {
         String requestURL = String.format("drive/items/%s/children", concreteOneFolder.getId());
 
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.GET);
@@ -373,15 +325,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return items;
     }
 
-    /**
-     * Gets all child folder of the specified folder.
-     *
-     * @param concreteOneFolder
-     * @return children
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public List<OneFolder> getChildFolder(ConcreteOneFolder concreteOneFolder) throws IOException, OneDriveException {
+    @Override
+    public List<OneFolder> getChildFolder(OneFolder concreteOneFolder) throws IOException {
         List<OneFolder> folder = new ArrayList<>();
         for (OneItem item : this.getChildren(concreteOneFolder, OneItemType.FOLDER)) {
             folder.add((OneFolder) item);
@@ -390,15 +335,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return folder;
     }
 
-    /**
-     * Gets all child files of the specified folder.
-     *
-     * @param concreteOneFolder
-     * @return children
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public List<OneFile> getChildFiles(ConcreteOneFolder concreteOneFolder) throws IOException, OneDriveException {
+    @Override
+    public List<OneFile> getChildFiles(OneFolder concreteOneFolder) throws IOException {
         List<OneFile> files = new ArrayList<>();
         for (OneItem item : this.getChildren(concreteOneFolder, OneItemType.FILE)) {
             files.add((OneFile) item);
@@ -407,29 +345,15 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return files;
     }
 
-    /**
-     * Perform the HTTP request to the OneDrive API with a json body.
-     *
-     * @param url
-     * @param method
-     * @param json   body of the request
-     * @return OneResponse
-     * @throws IOException
-     */
-    public OneResponse makeRequest(String url, PreparedRequestMethod method, String json) throws IOException, OneDriveAuthenticationException {
+    @Override
+    public OneResponse makeRequest(String url, PreparedRequestMethod method, String json) throws IOException {
         PreparedRequest request = new PreparedRequest(url, method);
         request.addHeader("Content-Type", "application/json");
         request.setBody(json.getBytes());
         return makeRequest(request);
     }
 
-    /**
-     * Perform the HTTP request to the OneDrive API.
-     *
-     * @param preparedRequest
-     * @return OneResponse
-     * @throws IOException
-     */
+    @Override
     public OneResponse makeRequest(PreparedRequest preparedRequest) throws IOException, OneDriveAuthenticationException {
 
         if(!this.session.isAuthenticated()){
@@ -466,30 +390,13 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return new ConcreteOneResponse(getDrivesResponse);
     }
 
-    /**
-     * Create a new folder in OneDrive.
-     *
-     * @param folder the parent folder
-     * @param name   name of the new folder
-     * @return OneFolder the newly created folder
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public OneFolder createFolder(OneFolder folder, String name) throws IOException, OneDriveException {
+    @Override
+    public OneFolder createFolder(OneFolder folder, String name) throws IOException {
         return createFolder(folder, name, ConflictBehavior.RENAME);
     }
 
-    /**
-     * Create a new folder in OneDrive and define the behavior on folder name conflict.
-     *
-     * @param folder   the parent folder
-     * @param name
-     * @param behavior
-     * @return OneFolder the newly created folder
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public OneFolder createFolder(OneFolder folder, String name, ConflictBehavior behavior) throws IOException, OneDriveException {
+    @Override
+    public OneFolder createFolder(OneFolder folder, String name, ConflictBehavior behavior) throws IOException {
         String requestURL = String.format("drive/items/%s/children", folder.getId());
 
         String createFolderJson = "{\"name\": \"" + name + "\", \"folder\": { }, \"@name.conflictBehavior\": \"" + behavior.name + "\"}";
@@ -500,15 +407,14 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
             ConcreteOneFolder createdFolder = null;
             try {
                 createdFolder = ConcreteOneFolder.fromJSON(response.getBodyAsString());
-            } catch (ParseException e) {
-                throw new OneDriveException("API - response could not be processed", e);
+            } catch (OneDriveException e) {
+                throw new OneDriveException("API - response could not be processed", e.getCause());
             }
             createdFolder.setApi(this);
             return createdFolder;
         } else {
             throw new OneDriveException(response.toString());
         }
-
     }
 
     /**
@@ -528,15 +434,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return true;
     }
 
-    /**
-     * Deletes a OneDriveItem form OneDrive.
-     *
-     * @param oneItem to delete
-     * @return true on success
-     * @throws IOException
-     * @throws OneDriveException
-     */
-    public boolean deleteItem(OneItem oneItem) throws IOException, OneDriveException {
+    @Override
+    public boolean deleteItem(OneItem oneItem) throws IOException {
         String requestURL = String.format("drive/items/%s", oneItem.getId());
 
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.DELETE);
@@ -583,15 +482,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return path;
     }
 
-
-    /**
-     * Download a file from OneDrive by id and returns the byte[].
-     *
-     * @param fileID the OneDrive file id
-     * @return byte[]
-     * @throws IOException
-     */
-    public byte[] download(String fileID) throws IOException, OneDriveAuthenticationException {
+    @Override
+    public byte[] download(String fileID) throws IOException {
 //        session.getClient().setFollowRedirects(false);
 
         String url = "drive/items/%s/content";
@@ -605,14 +497,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return contentResponse.getBodyAsBytes();
     }
 
-    /**
-     * Download a file from OneDrive by id and returns the InputStream.
-     *
-     * @param fileID the OneDrive file id
-     * @return InputStream
-     * @throws IOException
-     */
-    public InputStream downloadAsStream(String fileID) throws IOException, OneDriveAuthenticationException {
+    @Override
+    public InputStream downloadAsStream(String fileID) throws IOException {
         String url = "drive/items/%s/content";
         url = String.format(url, fileID);
 
@@ -624,34 +510,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return contentResponse.getBodyAsStream();
     }
 
-    /**
-     * Copy a file in OneDrive to a location in OneDrive.
-     *
-     * @param id            OneDrive item id of the file to be copied
-     * @param destinationId id of the target folder
-     * @return OneFile the copied file
-     * @throws IOException
-     * @throws OneDriveException
-     * @throws ParseException
-     * @throws InterruptedException
-     */
-    public OneFile copy(String id, String destinationId) throws IOException, OneDriveException, ParseException, InterruptedException {
-        return this.copy(id, destinationId, null);
-    }
-
-    /**
-     * Copy and rename a file in OneDrive to a location in OneDrive.
-     *
-     * @param id            OneDrive item id of the file to be copied
-     * @param destinationId id of the target folder
-     * @param newName       the new name of the copied file
-     * @return OneFile the copied file
-     * @throws IOException
-     * @throws OneDriveException
-     * @throws ParseException
-     * @throws InterruptedException
-     */
-    public OneFile copy(String id, String destinationId, String newName) throws IOException, OneDriveException, ParseException, InterruptedException {
+    @Override
+    public OneFile copy(String id, String destinationId, String newName) throws IOException {
         ParentReference reference = new ParentReference();
         reference.setId(destinationId);
 
@@ -678,14 +538,19 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
             do {
                 PreparedRequest contentRequest = new PreparedRequest(redirectUrl, PreparedRequestMethod.GET);
                 response = makeRequest(contentRequest);
-                Thread.sleep(500);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new OneDriveException(e);
+                }
                 if (response.getStatusCode() == 303) {
                     redirectUrl = response.getHeader("Location");
                 }
             } while (response.getStatusCode() != 200 && response.getStatusCode() != 500);
 
             if (response.getStatusCode() == 500) {
-                HashMap<String, String> copyStatus = gson.fromJson(response.getBodyAsString(), HashMap.class);
+                @SuppressWarnings("unchecked")
+                Map<String, String> copyStatus = gson.fromJson(response.getBodyAsString(), HashMap.class);
                 throw new OneDriveException("Item copy operation status: " + copyStatus.get("status"));
             }
         }
@@ -693,18 +558,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return (OneFile) ConcreteOneFile.fromJSON(response.getBodyAsString()).setApi(this);
     }
 
-    /**
-     * Move a file in OneDrive.
-     *
-     * @param id            OneDrive item id of the file to be moved
-     * @param destinationId id of the target folder
-     * @return OneItem
-     * @throws IOException
-     * @throws OneDriveException
-     * @throws ParseException
-     * @throws InterruptedException
-     */
-    public OneItem move(String id, String destinationId) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneItem move(String id, String destinationId) throws IOException {
         ParentReference reference = new ParentReference();
         reference.setId(destinationId);
 
@@ -726,19 +580,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return OneItem.fromJSON(response.getBodyAsString()).setApi(this);
     }
 
-    /**
-     * Rename a file in OneDrive to a location in OneDrive.
-     *
-     * @param id OneDrive item id of the file to be copied
-     * @param parentId id of the source folder
-     * @param newName the new name of the copied file
-     * @return OneItem the renamed item
-     * @throws IOException
-     * @throws OneDriveException
-     * @throws ParseException
-     * @throws InterruptedException
-     */
-    public OneItem rename(String id, String parentId, String newName) throws IOException, OneDriveException, ParseException, InterruptedException {
+    @Override
+    public OneItem rename(String id, String parentId, String newName) throws IOException {
         ParentReference reference = new ParentReference();
         reference.setId(parentId);
 
@@ -761,6 +604,76 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String bodyJson = response.getBodyAsString();
         return OneItem.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * TODO is it right? because w/o itemId doesn't work.
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public Subscription subscribe(String notificationUrl, String clientState) throws IOException {
+        SubscriptionRequest requestBean = new SubscriptionRequest(notificationUrl, clientState);
+
+        String url = String.format("drive/root/subscriptions");
+        String json = gson.toJson(requestBean);
+
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.POST);
+        request.addHeader("Content-Type", "application/json");
+        request.setBody(json.getBytes());
+logger.info(url);
+logger.info(json);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 201) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
+
+        String bodyJson = response.getBodyAsString();
+        return Subscription.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * TODO argument should be Subscription
+     * @param subscriptionId {@link Subscription#getId()}
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public Subscription updateSubscription(String subscriptionId) throws IOException {
+        SubscriptionUpdateRequest requestBean = new SubscriptionUpdateRequest();
+
+        String url = String.format("drive/root/subscriptions/%s", subscriptionId);
+        String json = gson.toJson(requestBean);
+
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.PATCH);
+        request.addHeader("Content-Type", "application/json");
+        request.setBody(json.getBytes());
+logger.info(url);
+logger.info(json);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 200) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
+
+        String bodyJson = response.getBodyAsString();
+        return Subscription.fromJSON(bodyJson).setRawJson(bodyJson).setApi(this);
+    }
+
+    /**
+     * @param subscriptionId {@link Subscription#getId()}
+     * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
+     */
+    public void deleteSubscription(String subscriptionId) throws IOException {
+        String url = String.format("drive/root/subscriptions/%s", subscriptionId);
+
+logger.info(url);
+        PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.DELETE);
+
+        OneResponse response = this.makeRequest(request);
+        if (response.getStatusCode() != 204) {
+            OneDriveError error = gson.fromJson(response.getBodyAsString(), OneDriveError.class);
+            throw new OneDriveException("Request error: " + response.getStatusCode() + " " + error);
+        }
     }
 
     @Override

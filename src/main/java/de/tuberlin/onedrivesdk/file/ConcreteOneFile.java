@@ -1,17 +1,15 @@
 package de.tuberlin.onedrivesdk.file;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import de.tuberlin.onedrivesdk.common.OneItem;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownloadFile;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
-import org.json.simple.parser.ParseException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import de.tuberlin.onedrivesdk.folder.OneFolder;
 
 /**
  * Implementation of OneFile using methods from ConcreteOneDriveSDK
@@ -21,10 +19,6 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     private FileProperty file;
 
     private ConcreteOneFile() {
-    }
-
-    public static ConcreteOneFile fromJSON(String json) throws ParseException, OneDriveException {
-        return (ConcreteOneFile) OneItem.fromJSON(json).setRawJson(json);
     }
 
     @Override
@@ -47,7 +41,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFile refresh() throws OneDriveException, IOException {
+    public OneFile refresh() throws IOException {
         return (OneFile) super.refreshItem();
     }
 
@@ -67,7 +61,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFolder getParentFolder() throws IOException, OneDriveException {
+    public OneFolder getParentFolder() throws IOException {
         return super.getParentFolder();
     }
 
@@ -82,17 +76,17 @@ public class ConcreteOneFile extends OneItem implements OneFile {
     }
 
     @Override
-    public OneFile copy(OneFolder targetFolder) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneFile copy(OneFolder targetFolder) throws IOException {
         return this.copy(targetFolder, null);
     }
 
     @Override
-    public OneFile copy(OneFolder targetFolder, String name) throws IOException, OneDriveException, ParseException, InterruptedException {
+    public OneFile copy(OneFolder targetFolder, String name) throws IOException {
         return api.copy(id, targetFolder.getId(), name);
     }
 
     @Override
-    public OneItem move(OneFolder targetFolder) throws InterruptedException, OneDriveException, ParseException, IOException {
+    public OneItem move(OneFolder targetFolder) throws IOException {
         return api.move(id, targetFolder.getId());
     }
 }

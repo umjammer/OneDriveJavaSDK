@@ -28,46 +28,54 @@ public class ConcreteOneDrive implements OneDrive {
     protected DriveOwner owner;
     protected DriveQuota quota;
     protected String rawJson = "";
-	private static final Logger logger = LogManager.getLogger(ConcreteOneDrive.class);
+    private static final Logger logger = LogManager.getLogger(ConcreteOneDrive.class);
 
     private ConcreteOneDrive() {
     }
 
-    public static List<OneDrive> parseDrivesFromJson(String json) throws OneDriveException, ParseException {
-        OneDriveError error;
-        if ((error = OneDriveError.parseError(json)) != null) {
-            throw new OneDriveException(error.toString());
-        }
-
-        JSONParser parser = new JSONParser();
-        JSONObject root = null;
-
+    public static List<OneDrive> parseDrivesFromJson(String json) throws OneDriveException {
         try {
-            root = (JSONObject) parser.parse(json);
+            OneDriveError error;
+            if ((error = OneDriveError.parseError(json)) != null) {
+                throw new OneDriveException(error.toString());
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject root = null;
+
+            try {
+                root = (JSONObject) parser.parse(json);
+            } catch (ParseException e) {
+                logger.warn("Something failed while parsing Json {}", e.getMessage());
+                logger.debug("Exception while parsing", e);
+            }
+
+            JSONArray values = (JSONArray) root.get("value");
+            json = values.toJSONString();
+
+            Gson gson = new Gson();
+            List<OneDrive> oneDrives = gson.fromJson(json, new TypeToken<List<ConcreteOneDrive>>() {
+            }.getType());
+
+            return oneDrives;
         } catch (ParseException e) {
-        	logger.warn("Something failed while parsing Json {}",e.getMessage());
-            logger.debug("Exception while parsing",e);
+            throw new OneDriveException("API - response could not be processed", e);
         }
-
-        JSONArray values = (JSONArray) root.get("value");
-        json = values.toJSONString();
-
-        Gson gson = new Gson();
-        List<OneDrive> oneDrives = gson.fromJson(json, new TypeToken<List<ConcreteOneDrive>>() {
-        }.getType());
-
-        return oneDrives;
     }
 
-    public static ConcreteOneDrive fromJSON(String json) throws ParseException, OneDriveException {
-        OneDriveError error;
-        if ((error = OneDriveError.parseError(json)) != null) {
-            throw new OneDriveException(error.toString());
-        }
+    public static ConcreteOneDrive fromJSON(String json) throws OneDriveException {
+        try {
+            OneDriveError error;
+            if ((error = OneDriveError.parseError(json)) != null) {
+                throw new OneDriveException(error.toString());
+            }
 
-        Gson gson = new Gson();
-        ConcreteOneDrive drive = gson.fromJson(json, ConcreteOneDrive.class);
-        return drive.setRawJson(json);
+            Gson gson = new Gson();
+            ConcreteOneDrive drive = gson.fromJson(json, ConcreteOneDrive.class);
+            return drive.setRawJson(json);
+        } catch (ParseException e) {
+            throw new OneDriveException("API - response could not be processed", e);
+        }
     }
 
     public OneDrive setApi(ConcreteOneDriveSDK api) {
@@ -106,9 +114,9 @@ public class ConcreteOneDrive implements OneDrive {
     }
 
     @Override
-    public OneFolder getRootFolder() throws IOException, OneDriveException {
-		return api.getRootFolder(this);
-	}
+    public OneFolder getRootFolder() throws IOException {
+        return api.getRootFolder(this);
+    }
 
     @Override
     public String getRawJson() {
