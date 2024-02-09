@@ -1,9 +1,9 @@
 package de.tuberlin.onedrivesdk.drive;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
@@ -16,15 +16,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+
 
 /**
  * Implementation of the OneDrive Interface
  */
 public class ConcreteOneDrive implements OneDrive {
+    @Expose
     protected String id;
     protected ConcreteOneDriveSDK api;
+    @Expose
     protected String driveType;
+    @Expose
     protected DriveOwner owner;
+    @Expose
     protected DriveQuota quota;
     protected String rawJson = "";
     private static final Logger logger = LogManager.getLogger(ConcreteOneDrive.class);
@@ -52,7 +58,6 @@ public class ConcreteOneDrive implements OneDrive {
             JSONArray values = (JSONArray) root.get("value");
             json = values.toJSONString();
 
-            Gson gson = new Gson();
             List<OneDrive> oneDrives = gson.fromJson(json, new TypeToken<List<ConcreteOneDrive>>() {
             }.getType());
 
@@ -69,7 +74,6 @@ public class ConcreteOneDrive implements OneDrive {
                 throw new OneDriveException(error.toString());
             }
 
-            Gson gson = new Gson();
             ConcreteOneDrive drive = gson.fromJson(json, ConcreteOneDrive.class);
             return drive.setRawJson(json);
         } catch (ParseException e) {

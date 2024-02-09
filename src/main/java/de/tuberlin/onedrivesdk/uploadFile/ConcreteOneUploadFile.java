@@ -8,9 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -28,7 +27,6 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 
     private static final int chunkSize = 320 * 1024 * 30; // (use a multiple value of 320KB, best practice of dev.onedrive)
     private static final Logger logger = LogManager.getLogger(ConcreteOneUploadFile.class);
-    private static final Gson gson = new Gson();
     private final ReentrantLock shouldRun = new ReentrantLock(true);
     private File fileToUpload;
     private OneDriveSDK api;

@@ -58,6 +58,7 @@ public class OneDriveSession implements Runnable {
     private ExecutorService refreshThread;
     private ExceptionEventHandler refreshExceptionHandler;
 
+    @Expose
     private String tokenType;
 
     @Expose
@@ -69,6 +70,7 @@ public class OneDriveSession implements Runnable {
     @Expose
     private long lastRefresh = Long.MIN_VALUE;
 
+    @Expose
     private String redirect_uri;
     private boolean keepRefreshing = true;
 

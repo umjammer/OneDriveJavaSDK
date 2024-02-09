@@ -9,9 +9,8 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -32,8 +31,6 @@ import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
 public class ConcreteOneUpload implements OneUpload {
 
     private static final Logger logger = LogManager.getLogger(ConcreteOneUpload.class);
-
-    private static final Gson gson = new Gson();
 
     private OneDriveSDK api;
 

@@ -12,11 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.google.gson.annotations.Expose;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
-
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 
 /**
@@ -39,13 +39,16 @@ public class Subscription {
      */
     protected String rawJson = "";
 
+    @Expose
     protected String expirationDateTime;
+    @Expose
     protected String id;
+    @Expose
     protected boolean muted;
+    @Expose
     protected String notificationUrl;
+    @Expose
     protected String resource;
-
-    private static final Gson gson = new Gson();
 
     /**
      * Parse a OneItem object from JSON.

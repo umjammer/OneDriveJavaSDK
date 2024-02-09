@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.google.gson.annotations.Expose;
+
+
 /**
  * SubscriptionRequest.
  *
@@ -30,7 +33,9 @@ class SubscriptionRequest {
 //    protected String resource = "/me/drive/root";
     // TODO might not work
 //    protected String id;
+    @Expose
     protected String notificationUrl;
+    @Expose
     protected String clientState;
 
     /** */
@@ -39,6 +44,7 @@ class SubscriptionRequest {
         this.clientState = clientState;
     }
 
+    @Expose
     protected String expirationDateTime = getExpireTime();
 
     static String getExpireTime() {
@@ -50,6 +56,7 @@ class SubscriptionRequest {
 }
 
 class SubscriptionUpdateRequest {
+    @Expose
     protected String expirationDateTime = SubscriptionRequest.getExpireTime();
 }
 

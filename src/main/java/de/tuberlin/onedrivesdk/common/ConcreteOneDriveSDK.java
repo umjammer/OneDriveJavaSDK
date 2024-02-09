@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -49,7 +50,7 @@ import okhttp3.Response;
 public class ConcreteOneDriveSDK implements OneDriveSDK {
 
     private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
-    private static final Gson gson = new Gson();
+    public static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     private String baseUrl = "https://api.onedrive.com/v1.0/";
     private OneDriveSession session;
@@ -351,7 +352,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(url, method);
         request.addHeader("Content-Type", "application/json");
         if (json != null) {
-        request.setBody(json.getBytes());
+            request.setBody(json.getBytes());
         }
         return makeRequest(request);
     }

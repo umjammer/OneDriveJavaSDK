@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.google.gson.annotations.Expose;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownload;
 import de.tuberlin.onedrivesdk.downloadFile.ConcreteOneDownloadFile;
@@ -16,6 +17,7 @@ import de.tuberlin.onedrivesdk.folder.OneFolder;
  */
 public class ConcreteOneFile extends OneItem implements OneFile {
 
+    @Expose
     private FileProperty file;
 
     private ConcreteOneFile() {

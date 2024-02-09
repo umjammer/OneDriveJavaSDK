@@ -1,11 +1,17 @@
 package de.tuberlin.onedrivesdk.common;
 
+import com.google.gson.annotations.Expose;
+
+
 /**
  * The parent folder reference of an item. Used for JSON transport.
  */
 public class ParentReference {
+    @Expose
     protected String driveId;
+    @Expose
     protected String id;
+    @Expose
     protected String path;
 
     public String getDriveId() {

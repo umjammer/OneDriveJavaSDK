@@ -1,10 +1,15 @@
 package de.tuberlin.onedrivesdk.drive;
 
+import com.google.gson.annotations.Expose;
+
+
 /**
  * Data object for drive user
  */
 public class DriveUser {
+    @Expose
     private String id;
+    @Expose
     private String displayName;
 
     public DriveUser(String displayName, String id) {

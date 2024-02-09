@@ -69,6 +69,13 @@
           <trimStackTrace>false</trimStackTrace>
           <argLine>
             -DXjava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+            --add-opens java.base/java.net=ALL-UNNAMED
+            --add-opens java.base/java.io=ALL-UNNAMED
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.lang.ref=ALL-UNNAMED
+            --add-opens java.base/jdk.internal.ref=ALL-UNNAMED
+            --add-opens java.logging/java.util.logging=ALL-UNNAMED
+            --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED
           </argLine>
         </configuration>
       </plugin>
