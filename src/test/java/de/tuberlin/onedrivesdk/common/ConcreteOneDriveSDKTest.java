@@ -4,21 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveFactory;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.downloadFile.OneDownloadFile;
@@ -26,13 +19,28 @@ import de.tuberlin.onedrivesdk.drive.OneDrive;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 public class ConcreteOneDriveSDKTest {
 
+    static boolean localPropertiesExists() {
+            return java.nio.file.Files.exists(Paths.get("credentials.properties"));
+        }
+
     @Test
     @Disabled
-    public void uploadBigFile() throws IOException, OneDriveException, NoSuchAlgorithmException, InterruptedException {
-        OneDriveSDK api = this.connect();
+    public void uploadBigFile() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
 
         int fileLength = 10000;
         String fileName = "src/test/resources/uploadTest.big";
@@ -42,19 +50,19 @@ public class ConcreteOneDriveSDKTest {
         File localFile = new File(fileName);
         File destinationFile = new File(downloadDestination);
 
-        this.generateFile(fileName, fileLength);
+        ConcreteOneDriveSDKTest.generateFile(fileName, fileLength);
 
         HashCode sourceHash = Files.asByteSource(localFile).hash(Hashing.sha256());
 
         OneFolder targetFolder = api.getFolderByPath(targetPath);
-        final OneUploadFile upload = targetFolder.uploadFile(localFile);
+        OneUploadFile upload = targetFolder.uploadFile(localFile);
 
         upload.startUpload();
 
         Thread.sleep(2000);
 
         OneFile remoteFile = api.getFileByPath("/IntegrationTesting/FolderForUploads/" + localFile.getName());
-        Assertions.assertEquals(sourceHash.toString().toUpperCase(), remoteFile.getSHA1Hash());
+        assertEquals(sourceHash.toString().toUpperCase(), remoteFile.getSHA1Hash());
 
         OneDownloadFile downloadedFile = remoteFile.download(destinationFile);
         downloadedFile.startDownload();
@@ -67,10 +75,10 @@ public class ConcreteOneDriveSDKTest {
         if (!destinationFile.delete())
             System.err.println("Downloaded file could not be deleted.");
 
-        Assertions.assertEquals(sourceHash.toString().toUpperCase(), downloadedHash.toString().toUpperCase());
+        assertEquals(sourceHash.toString().toUpperCase(), downloadedHash.toString().toUpperCase());
     }
 
-    private void generateFile(String fileName, long fileLength) throws IOException {
+    private static void generateFile(String fileName, long fileLength) throws Exception {
         File f = new File(fileName);
 
         OutputStream out = new FileOutputStream(f);
@@ -87,99 +95,100 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
-    public void testGetAllDrives() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    @EnabledIf("localPropertiesExists")
+    public void testGetAllDrives() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         List<OneDrive> drives = api.getAllDrives();
-        Assertions.assertTrue(drives.size() == 1);
-        Assertions.assertEquals(drives.get(0).getDriveType(), "personal");
+        assertEquals(1, drives.size());
+        assertEquals(drives.get(0).getDriveType(), "personal");
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetDefaultDrive() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testGetDefaultDrive() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneDrive drive = api.getDefaultDrive();
-        Assertions.assertNotNull(drive);
-        Assertions.assertEquals("3fb7bc4f1939ee71", drive.getId());
+        assertNotNull(drive);
+        assertEquals("3fb7bc4f1939ee71", drive.getId());
     }
 
     @Test
-    public void testRootFolder() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    @EnabledIf("localPropertiesExists")
+    public void testRootFolder() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneDrive drive = api.getDefaultDrive();
         OneFolder rootFolder = api.getRootFolder(drive);
         OneFolder folder = api.getRootFolder(drive);
-        Assertions.assertEquals(folder.getName(), "root");
-        Assertions.assertEquals(folder.getName(), rootFolder.getName());
+        assertEquals("root", folder.getName());
+        assertEquals(rootFolder.getName(), folder.getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFileByPath() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
-        Assertions.assertEquals("Image.jpg", api.getFileByPath("/IntegrationTesting/Image.jpg").getName());
+    public void testGetFileByPath() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertEquals("Image.jpg", api.getFileByPath("/IntegrationTesting/Image.jpg").getName());
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testFileNotFound() {
-        OneDriveSDK api = this.connect();
-        try {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertThrows(IOException.class, () -> {
             api.getFileByPath("/File/Not/Found.txt");
-            Assertions.fail();
-        } catch (IOException e) {
-        }
+        });
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFileById() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
-        Assertions.assertEquals("Image.jpg", api.getFileById("3FB7BC4F1939EE71!105").getName());
+    public void testGetFileById() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertEquals("Image.jpg", api.getFileById("3FB7BC4F1939EE71!105").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testFolderByPath() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
-        Assertions.assertEquals("SecondLevelFolder", api.getFolderByPath("/IntegrationTesting/SecondLevelFolder").getName());
+    public void testFolderByPath() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertEquals("SecondLevelFolder", api.getFolderByPath("/IntegrationTesting/SecondLevelFolder").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFolderById() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
-        Assertions.assertEquals("root", api.getFolderById("3FB7BC4F1939EE71!103").getName());
+    public void testGetFolderById() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertEquals("root", api.getFolderById("3FB7BC4F1939EE71!103").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetDriveById() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
-        Assertions.assertEquals("3fb7bc4f1939ee71", api.getDrive("3fb7bc4f1939ee71").getId());
+    public void testGetDriveById() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
+        assertEquals("3fb7bc4f1939ee71", api.getDrive("3fb7bc4f1939ee71").getId());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildCount() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testChildCount() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
-        Assertions.assertEquals(6, folder.getChildCount());
+        assertEquals(6, folder.getChildCount());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildFolder() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testChildFolder() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
         List<String> expectedChildren = Arrays.asList("FolderForUploads", "FolderForDownload", "SecondLevelFolder", "FolderForFolderCreation", "FolderForMoveAndCopy");
         List<OneFolder> children = folder.getChildFolder();
 
-        Assertions.assertEquals(expectedChildren.size(), children.size());
+        assertEquals(expectedChildren.size(), children.size());
 
         for (OneFolder child : children) {
-            Assertions.assertTrue(expectedChildren.contains(child.getName()));
+            assertTrue(expectedChildren.contains(child.getName()));
         }
 
         for (String expectedChild : expectedChildren) {
@@ -190,23 +199,23 @@ public class ConcreteOneDriveSDKTest {
                     break;
                 }
             }
-            Assertions.assertTrue(found);
+            assertTrue(found);
         }
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildFiles() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testChildFiles() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
-        List<String> expectedChildren = Arrays.asList("Image.jpg");
+        List<String> expectedChildren = List.of("Image.jpg");
         List<OneFile> children = folder.getChildFiles();
 
-        Assertions.assertEquals(1, children.size());
+        assertEquals(1, children.size());
 
         for (OneFile child : children) {
-            Assertions.assertTrue(expectedChildren.contains(child.getName()));
+            assertTrue(expectedChildren.contains(child.getName()));
         }
 
         for (String expectedChild : expectedChildren) {
@@ -217,14 +226,14 @@ public class ConcreteOneDriveSDKTest {
                     break;
                 }
             }
-            Assertions.assertTrue(found);
+            assertTrue(found);
         }
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetChildren() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testGetChildren() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
         int expectedFiles = 1;
@@ -240,17 +249,17 @@ public class ConcreteOneDriveSDKTest {
                 folderCount++;
         }
 
-        Assertions.assertEquals(expectedFolder, folderCount);
-        Assertions.assertEquals(expectedFiles, fileCount);
+        assertEquals(expectedFolder, folderCount);
+        assertEquals(expectedFiles, fileCount);
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testCreateAndDeleteFolder() throws IOException, OneDriveException {
+    public void testCreateAndDeleteFolder() throws Exception {
         String folderName = "TestFolder";
         String path = "/IntegrationTesting/FolderForFolderCreation";
 
-        OneDriveSDK api = this.connect();
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder targetFolder = api.getFolderByPath(path);
 
         int folderCount = targetFolder.getChildCount();
@@ -261,46 +270,46 @@ public class ConcreteOneDriveSDKTest {
         targetFolder = targetFolder.refresh();
         boolean rightFolderCount = (folderCount + 2) == targetFolder.getChildCount();
 
-        Assertions.assertTrue(rightFolderCount);
-        Assertions.assertEquals(folderName, createdFolder.getName());
-        Assertions.assertEquals(folderName+" 1", secondFolder.getName());
+        assertTrue(rightFolderCount);
+        assertEquals(folderName, createdFolder.getName());
+        assertEquals(folderName+" 1", secondFolder.getName());
 
         //delete folder (cleanup)
         if (rightFolderCount) {
             createdFolder.delete();
             secondFolder.delete();
             targetFolder = targetFolder.refresh();
-            Assertions.assertEquals(folderCount, targetFolder.getChildCount());
+            assertEquals(folderCount, targetFolder.getChildCount());
         }
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testRefresh() throws IOException, OneDriveException {
+    public void testRefresh() throws Exception {
         String folderName = "TestFolder";
         String path = "/IntegrationTesting/FolderForFolderCreation";
 
-        OneDriveSDK api = this.connect();
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder targetFolder = api.getFolderByPath(path);
 
         OneFolder createdFolder = targetFolder.createFolder(folderName);
 
         OneFolder refreshFolder = targetFolder.refresh();
 
-        Assertions.assertTrue(refreshFolder.getLastRefresh() > targetFolder.getLastRefresh());
+        assertTrue(refreshFolder.getLastRefresh() > targetFolder.getLastRefresh());
 
-        Assertions.assertEquals(targetFolder.getId(), refreshFolder.getId());
-        Assertions.assertEquals(targetFolder.getName(), refreshFolder.getName());
-        Assertions.assertFalse(targetFolder.getChildCount() == refreshFolder.getChildCount());
+        assertEquals(targetFolder.getId(), refreshFolder.getId());
+        assertEquals(targetFolder.getName(), refreshFolder.getName());
+        assertNotEquals(targetFolder.getChildCount(), refreshFolder.getChildCount());
 
         OneFolder refetchFolder = api.getFolderByPath(path);
 
-        Assertions.assertEquals(refetchFolder.getId(), refreshFolder.getId());
-        Assertions.assertEquals(refetchFolder.getName(), refreshFolder.getName());
-        Assertions.assertTrue(refetchFolder.getChildCount() == refreshFolder.getChildCount());
+        assertEquals(refetchFolder.getId(), refreshFolder.getId());
+        assertEquals(refetchFolder.getName(), refreshFolder.getName());
+        assertEquals(refetchFolder.getChildCount(), refreshFolder.getChildCount());
 
-        Assertions.assertTrue(refreshFolder.getLastRefresh() < refetchFolder.getLastRefresh());
-        Assertions.assertTrue(refetchFolder != targetFolder && refreshFolder != targetFolder);
+        assertTrue(refreshFolder.getLastRefresh() < refetchFolder.getLastRefresh());
+        assertTrue(refetchFolder != targetFolder && refreshFolder != targetFolder);
 
         createdFolder.delete();
     }
@@ -308,7 +317,7 @@ public class ConcreteOneDriveSDKTest {
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
     public void testDeleteFile() throws Exception {
-        OneDriveSDK api = this.connect();
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         String testFileName = "uploadTest.jpg";
         String targetPath = "/IntegrationTesting/FolderForUploads";
 
@@ -336,16 +345,16 @@ public class ConcreteOneDriveSDKTest {
         if (fileToDelete != null) {
             fileToDelete.delete();
             targetFolder = targetFolder.refresh();
-            Assertions.assertEquals(childCount - 1, targetFolder.getChildCount());
+            assertEquals(childCount - 1, targetFolder.getChildCount());
         } else {
-            Assertions.fail("file with name '" + testFileName + "' not found");
+            fail("file with name '" + testFileName + "' not found");
         }
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testCopyFile() throws IOException, OneDriveException, ParseException, InterruptedException {
-        OneDriveSDK api = this.connect();
+    public void testCopyFile() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFile file = api.getFileByPath("/IntegrationTesting/FolderForMoveAndCopy/Image.jpg");
         OneFolder targetFolder = api.getFolderByPath("/IntegrationTesting/FolderForMoveAndCopy/CopyTarget");
 
@@ -358,14 +367,14 @@ public class ConcreteOneDriveSDKTest {
             newFile.delete();
         }
 
-        Assertions.assertEquals(itemCount + 1, targetFolder.getChildCount());
-        Assertions.assertEquals(newFile.getName(), file.getName());
+        assertEquals(itemCount + 1, targetFolder.getChildCount());
+        assertEquals(newFile.getName(), file.getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testMoveFile() throws IOException, OneDriveException, ParseException, InterruptedException {
-        OneDriveSDK api = this.connect();
+    public void testMoveFile() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFile file = api.getFileByPath("/IntegrationTesting/FolderForMoveAndCopy/ImageForMove.jpg");
         OneFolder sourceFolder = file.getParentFolder();
         OneFolder targetFolder = api.getFolderByPath("/IntegrationTesting/FolderForMoveAndCopy/MoveTarget");
@@ -373,37 +382,38 @@ public class ConcreteOneDriveSDKTest {
         int sourceItemCount = sourceFolder.getChildCount();
         int targetItemCount = targetFolder.getChildCount();
 
-        Assertions.assertEquals(sourceFolder.getId(), file.getParentFolder().getId());
+        assertEquals(sourceFolder.getId(), file.getParentFolder().getId());
 
-        OneFile newFile = OneFile.class.cast(file.move(targetFolder));
+        OneFile newFile = (OneFile) file.move(targetFolder);
         file = file.refresh();
 
-        Assertions.assertEquals(targetFolder.getId(), file.getParentFolder().getId());
+        assertEquals(targetFolder.getId(), file.getParentFolder().getId());
 
         targetFolder = targetFolder.refresh();
         sourceFolder = sourceFolder.refresh();
 
         newFile.move(sourceFolder);
 
-        Assertions.assertEquals(sourceItemCount - 1, sourceFolder.getChildCount());
-        Assertions.assertEquals(targetItemCount + 1, targetFolder.getChildCount());
-        Assertions.assertEquals(newFile.getName(), file.getName());
+        assertEquals(sourceItemCount - 1, sourceFolder.getChildCount());
+        assertEquals(targetItemCount + 1, targetFolder.getChildCount());
+        assertEquals(newFile.getName(), file.getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testParentFolder() throws IOException, OneDriveException {
-        OneDriveSDK api = this.connect();
+    public void testParentFolder() throws Exception {
+        OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("IntegrationTesting");
-        Assertions.assertEquals("root", folder.getParentFolder().getName());
+        assertEquals("root", folder.getParentFolder().getName());
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testFactory() {
-        Assertions.assertNotNull(new OneDriveFactory());
-        Assertions.assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), OneDriveScope.READWRITE));
-        Assertions.assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(),"",OneDriveScope.READWRITE));
-        Assertions.assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), "", new ExceptionEventHandler() {
+        assertNotNull(new OneDriveFactory());
+        assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), OneDriveScope.READWRITE));
+        assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(),"",OneDriveScope.READWRITE));
+        assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), "", new ExceptionEventHandler() {
             @Override
             public void handle(Exception e) {
 
@@ -416,7 +426,7 @@ public class ConcreteOneDriveSDKTest {
         }, OneDriveScope.READWRITE));
     }
 
-    private OneDriveSDK connect(){
+    private static OneDriveSDK connect(){
         return TestSDKFactory.getInstance();
     }
 }

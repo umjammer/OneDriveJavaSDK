@@ -3,7 +3,6 @@ package de.tuberlin.onedrivesdk.download;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
@@ -24,9 +23,7 @@ public class ConcreteOneDownloadIntegrationTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void simpleDownloadTest() throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException, IOException, InterruptedException {
+    public void simpleDownloadTest() throws Exception {
         OneDriveSDK api = TestSDKFactory.getInstance();
 
         OneFolder folder = api.getFolderByPath("/IntegrationTesting/FolderForDownload");

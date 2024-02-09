@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.annotations.Expose;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -16,7 +17,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
@@ -26,6 +26,9 @@ import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
+
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+
 
 /**
  * The root class of all files and folder types that can be accessed through this sdk.
@@ -42,56 +45,67 @@ public abstract class OneItem {
     /**
      * The OneDrive id of the resource.
      */
+    @Expose
     protected String id = "";
 
     /**
      * The Name.
      */
+    @Expose
     protected String name = "";
 
     /**
      * The created by reference. Possible keys are 'user', 'application' and 'device'.
      */
+    @Expose
     protected Map<String, DriveUser> createdBy = new HashMap<>();
 
     /**
      * The creation timestamp of this item.
      */
+    @Expose
     protected String createdDateTime;
 
     /**
      * The modified by reference. Possible keys are 'user', 'application' and 'device'.
      */
+    @Expose
     protected Map<String, DriveUser> lastModifiedBy = new HashMap<>();
 
     /**
      * The last modified timestamp of this item.
      */
+    @Expose
     protected String lastModifiedDateTime = "";
 
     /**
      * The cTag.
      */
+    @Expose
     protected String cTag = "";
 
     /**
      * The eTag.
      */
+    @Expose
     protected String eTag = "";
 
     /**
      * The size of an item in bytes.
      */
+    @Expose
     protected long size = 0;
 
     /**
      * URL that displays the resource in the browser.
      */
+    @Expose
     protected String webUrl = "";
 
     /**
      * The parent folder reference.
      */
+    @Expose
     protected ParentReference parentReference;
 
     /**
@@ -109,9 +123,6 @@ public abstract class OneItem {
      * A timestamp of the last refresh.
      */
     private long lastRefresh;
-
-    /** */
-    private static Gson gson = new Gson();
 
     /**
      * Parse a OneItem object from JSON.
@@ -159,7 +170,7 @@ public abstract class OneItem {
      * @param type OneItemType, can be used to define which type of items should be parsed
      * @return items from json
      * @throws ParseException if the JSON can not be parsed
-     * @throws OneDriveException if the json dose not contain a 'value' attribute
+     * @throws OneDriveException if the json does not contain a 'value' attribute
      */
     public static List<OneItem> parseItemsFromJson(String json, OneItemType type) throws IOException {
         ArrayList<OneItem> itemList = new ArrayList<>();

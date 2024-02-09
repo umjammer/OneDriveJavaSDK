@@ -8,10 +8,12 @@ package de.tuberlin.onedrivesdk.common;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import com.google.gson.annotations.Expose;
+
 
 /**
  * SubscriptionRequest.
@@ -23,7 +25,7 @@ import java.util.TimeZone;
  */
 class SubscriptionRequest {
 
-    protected List<String> scenarios = Arrays.asList("Webhook");
+    protected List<String> scenarios = List.of("Webhook");
     // "https://docs.microsoft.com/ja-jp/graph/api/subscription-post-subscriptions?view=graph-rest-1.0&tabs=http"
     // doesn't work
 //    protected String changeType = "updated";
@@ -31,7 +33,9 @@ class SubscriptionRequest {
 //    protected String resource = "/me/drive/root";
     // TODO might not work
 //    protected String id;
+    @Expose
     protected String notificationUrl;
+    @Expose
     protected String clientState;
 
     /** */
@@ -40,6 +44,7 @@ class SubscriptionRequest {
         this.clientState = clientState;
     }
 
+    @Expose
     protected String expirationDateTime = getExpireTime();
 
     static String getExpireTime() {
@@ -51,6 +56,7 @@ class SubscriptionRequest {
 }
 
 class SubscriptionUpdateRequest {
+    @Expose
     protected String expirationDateTime = SubscriptionRequest.getExpireTime();
 }
 

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 
 
 /**
@@ -31,5 +30,5 @@ public interface OneDownload {
      *
      * @return downloaded file
      */
-    InputStream getDownloadedInputStream() throws IOException, OneDriveAuthenticationException;
+    InputStream getDownloadedInputStream() throws IOException;
 }

@@ -1,10 +1,10 @@
 package de.tuberlin.onedrivesdk.networking;
 
-import okhttp3.Response;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import okhttp3.Response;
 
 /**
  * Wrapper for OkHTTP Responses  received by the ConcreteOneDriveSDK
@@ -47,17 +47,17 @@ public class ConcreteOneResponse implements OneResponse {
 	public int getStatusCode() {
 		return this.response.code();
 	}
-	
+
 	@Override
 	public List<String> getHeaders(String key){
 		return this.response.headers(key);
 	}
-	
+
 	@Override
 	public boolean wasSuccess() {
 		return this.response.isSuccessful();
 	}
-	
+
 	@Override
 	public String getHeader(String key) {
 		return this.response.header(key);

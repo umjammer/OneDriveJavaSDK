@@ -23,7 +23,7 @@ public class SessionProvider  {
 
     static File sessionFile = new File("testSession.ser");
 
-    public static OneDriveSession getSession() throws IOException, OneDriveException {
+    public static OneDriveSession getSession() throws IOException {
         if(sessionFile.exists()){
             try {
                 OneDriveSession session = OneDriveSession.readFromFile(sessionFile);
@@ -38,16 +38,16 @@ public class SessionProvider  {
         return openSession();
     }
 
-    private static OneDriveSession openSession() throws IOException, OneDriveException {
-        final OneDriveSession session = OneDriveSession.initializeSession(new OkHttpClient(),clientID, clientSecret,
-                null,new OneDriveScope[]{OneDriveScope.SIGNIN, OneDriveScope.OFFLINE_ACCESS, OneDriveScope.READWRITE});
+    private static OneDriveSession openSession() throws IOException {
+        OneDriveSession session = OneDriveSession.initializeSession(new OkHttpClient(),clientID, clientSecret,
+                null, OneDriveScope.SIGNIN, OneDriveScope.OFFLINE_ACCESS, OneDriveScope.READWRITE);
 
 
         openWebpage(new URL(session.getAccessURL()));
 
         // JUnit Interactivit workaround ... bad but hey...
-        final JFrame f = new JFrame("OAuthCode");
-        final JTextField codeField = new JTextField();
+        JFrame f = new JFrame("OAuthCode");
+        JTextField codeField = new JTextField();
         codeField.setPreferredSize(new Dimension(100, 21));
         JButton send = new JButton("send");
         f.setLayout(new FlowLayout(FlowLayout.LEFT));

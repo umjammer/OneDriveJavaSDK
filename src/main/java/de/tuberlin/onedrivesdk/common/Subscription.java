@@ -12,11 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.google.gson.annotations.Expose;
+import de.tuberlin.onedrivesdk.OneDriveException;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
-
-import de.tuberlin.onedrivesdk.OneDriveException;
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 
 /**
@@ -39,20 +39,23 @@ public class Subscription {
      */
     protected String rawJson = "";
 
+    @Expose
     protected String expirationDateTime;
+    @Expose
     protected String id;
+    @Expose
     protected boolean muted;
+    @Expose
     protected String notificationUrl;
+    @Expose
     protected String resource;
-
-    private static final Gson gson = new Gson();
 
     /**
      * Parse a OneItem object from JSON.
      *
      * @param json JSON from the OneDrive API
      * @return OneItem
-     * @throws ParseException if the JSON can not be parsed
+     * @throws OneDriveException if the JSON can not be parsed
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
     public static Subscription fromJSON(String json) throws OneDriveException {
@@ -137,12 +140,12 @@ public class Subscription {
     }
 
     /** */
-    public Subscription update() throws IOException, OneDriveException, ParseException, InterruptedException  {
+    public Subscription update() throws IOException, ParseException, InterruptedException  {
         return api.updateSubscription(id);
     }
 
     /** */
-    public void delete() throws IOException, OneDriveException, ParseException, InterruptedException  {
+    public void delete() throws IOException, ParseException, InterruptedException  {
         api.deleteSubscription(id);
     }
 }

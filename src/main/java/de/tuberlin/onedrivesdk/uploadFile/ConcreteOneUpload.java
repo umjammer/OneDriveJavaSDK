@@ -9,16 +9,14 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
 import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
@@ -33,8 +31,6 @@ import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
 public class ConcreteOneUpload implements OneUpload {
 
     private static final Logger logger = LogManager.getLogger(ConcreteOneUpload.class);
-
-    private static final Gson gson = new Gson();
 
     private OneDriveSDK api;
 
@@ -52,7 +48,7 @@ public class ConcreteOneUpload implements OneUpload {
             String filename,
             long size,
             Consumer<OneItem> finished,
-            OneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+            OneDriveSDK api) throws IOException {
         checkNotNull(parentFolder);
         this.api = checkNotNull(api);
         this.size = size;
@@ -62,7 +58,7 @@ public class ConcreteOneUpload implements OneUpload {
     }
 
     @Override
-    public OutputStream upload() throws IOException, OneDriveException {
+    public OutputStream upload() throws IOException {
 
         return new OutputStream() {
             @Override

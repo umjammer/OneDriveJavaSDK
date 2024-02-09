@@ -1,5 +1,6 @@
 package de.tuberlin.onedrivesdk.uploadFile;
 
+import com.google.gson.annotations.Expose;
 import de.tuberlin.onedrivesdk.OneDriveException;
 /**
  * THis internal class keeps a representation of the UploadSession provided by the OneDriveAPI
@@ -7,9 +8,12 @@ import de.tuberlin.onedrivesdk.OneDriveException;
  *
  */
 public class UploadSession {
-	
+
+	@Expose
 	private String uploadUrl;
+	@Expose
 	private long expirationDate;
+	@Expose
 	private String[] nextExpectedRanges;
 	private UploadSession() {}
 

@@ -1,10 +1,15 @@
 package de.tuberlin.onedrivesdk.common;
 
+import com.google.gson.annotations.Expose;
+
+
 /**
  * Wrapper class for json transport.
  */
 public class OneDestinationItem {
+    @Expose
     protected ParentReference parentReference;
+    @Expose
     protected String name;
 
     public OneDestinationItem(ParentReference reference, String name) {

@@ -8,16 +8,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
 import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
@@ -29,7 +27,6 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 
     private static final int chunkSize = 320 * 1024 * 30; // (use a multiple value of 320KB, best practice of dev.onedrive)
     private static final Logger logger = LogManager.getLogger(ConcreteOneUploadFile.class);
-    private static final Gson gson = new Gson();
     private final ReentrantLock shouldRun = new ReentrantLock(true);
     private File fileToUpload;
     private OneDriveSDK api;
@@ -40,12 +37,12 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     private String uploadUrl = "";
 
     public ConcreteOneUploadFile(OneFolder parentFolder,
-                                 File fileToUpload, OneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+                                 File fileToUpload, OneDriveSDK api) throws IOException {
         this(parentFolder, fileToUpload, fileToUpload.getName(), api);
     }
 
     public ConcreteOneUploadFile(OneFolder parentFolder,
-             File fileToUpload, String filename, OneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+             File fileToUpload, String filename, OneDriveSDK api) throws IOException {
         checkNotNull(parentFolder);
         this.api = checkNotNull(api);
 
@@ -73,7 +70,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     }
 
     @Override
-    public long uploadStatus() throws IOException, OneDriveException {
+    public long uploadStatus() throws IOException {
         if (uploadSession != null) {
             PreparedRequest request = new PreparedRequest(this.uploadUrl, PreparedRequestMethod.GET);
             OneResponse response = api.makeRequest(request);
@@ -87,7 +84,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     }
 
     @Override
-    public OneFile startUpload() throws IOException, OneDriveException {
+    public OneFile startUpload() throws IOException {
         byte[] bytes;
         ConcreteOneFile finishedFile = null;
 
@@ -178,7 +175,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     }
 
     @Override
-    public OneUploadFile cancelUpload() throws IOException, OneDriveAuthenticationException {
+    public OneUploadFile cancelUpload() throws IOException {
         logger.info("Canceling upload");
         this.canceled = true;
         if (uploadSession != null) {
@@ -195,7 +192,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     }
 
     @Override
-    public OneFile call() throws IOException, OneDriveException {
+    public OneFile call() throws IOException {
         logger.info("Starting upload");
         return startUpload();
     }

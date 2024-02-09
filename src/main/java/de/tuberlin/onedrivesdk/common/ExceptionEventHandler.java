@@ -5,6 +5,6 @@ package de.tuberlin.onedrivesdk.common;
  */
 public interface ExceptionEventHandler {
 
-    public void handle(Exception e);
-    public void handle(Object src,Exception e);
+    void handle(Exception e);
+    void handle(Object src, Exception e);
 }

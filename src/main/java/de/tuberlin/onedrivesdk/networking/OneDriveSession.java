@@ -6,9 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,13 +21,9 @@ import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.Expose;
 import okhttp3.MediaType;
@@ -51,7 +46,7 @@ public class OneDriveSession implements Runnable {
     private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
 
     private final static String ENDPOINT = "https://login.live.com";
-    private final long refreshDelay = 3000 * 1000;//3000 sec to ms
+    private static final long refreshDelay = 3000 * 1000;//3000 sec to ms
 
     @Expose
     private final String clientID;
@@ -63,6 +58,7 @@ public class OneDriveSession implements Runnable {
     private ExecutorService refreshThread;
     private ExceptionEventHandler refreshExceptionHandler;
 
+    @Expose
     private String tokenType;
 
     @Expose
@@ -74,6 +70,7 @@ public class OneDriveSession implements Runnable {
     @Expose
     private long lastRefresh = Long.MIN_VALUE;
 
+    @Expose
     private String redirect_uri;
     private boolean keepRefreshing = true;
 
@@ -85,11 +82,7 @@ public class OneDriveSession implements Runnable {
         this.scopes = scopes;
 
         if (redirectUri != null) {
-            try {
-                this.redirect_uri = URLEncoder.encode(redirectUri, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("redirectURL is not a valid url... or something else went horrobly wrong at this point..." + e.getMessage());
-            }
+            this.redirect_uri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8);
         }
 
         this.refreshExceptionHandler = refreshExceptionHandler;
@@ -183,44 +176,38 @@ public class OneDriveSession implements Runnable {
     }
 
     private static Gson builderGson() {
-        final GsonBuilder builder = new GsonBuilder().excludeFieldsWithModifiers();
-        builder.registerTypeAdapter(OneDriveSession.class, new JsonDeserializer<OneDriveSession>() {
-            @Override
-            public OneDriveSession deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-                JsonObject retValue = jsonElement.getAsJsonObject();
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithModifiers();
+        builder.registerTypeAdapter(OneDriveSession.class, (JsonDeserializer<OneDriveSession>) (jsonElement, type, jsonDeserializationContext) -> {
+            JsonObject retValue = jsonElement.getAsJsonObject();
 
-                String accessToken = retValue.get("accessToken").getAsString();
-                String refreshToken = retValue.get("refreshToken").getAsString();
-                String clientID = retValue.get("clientID").getAsString();
-                String clientSecret = retValue.get("clientSecret").getAsString();
-                long expiresIn = retValue.get("expiresIn").getAsLong();
-                long lastRefresh = retValue.get("lastRefresh").getAsLong();
+            String accessToken = retValue.get("accessToken").getAsString();
+            String refreshToken = retValue.get("refreshToken").getAsString();
+            String clientID = retValue.get("clientID").getAsString();
+            String clientSecret = retValue.get("clientSecret").getAsString();
+            long expiresIn = retValue.get("expiresIn").getAsLong();
+            long lastRefresh = retValue.get("lastRefresh").getAsLong();
 
-                OneDriveSession session = new OneDriveSession(new OkHttpClient(), clientID, clientSecret, null, null, new OneDriveScope[]{OneDriveScope.OFFLINE_ACCESS});
-                session.setRefreshToken(refreshToken);
-                session.setAccessToken(accessToken);
-                session.setLastRefresh(lastRefresh);
-                session.setExpiresIn(expiresIn);
-                return session;
-            }
+            OneDriveSession session = new OneDriveSession(new OkHttpClient(), clientID, clientSecret, null, null, new OneDriveScope[]{OneDriveScope.OFFLINE_ACCESS});
+            session.setRefreshToken(refreshToken);
+            session.setAccessToken(accessToken);
+            session.setLastRefresh(lastRefresh);
+            session.setExpiresIn(expiresIn);
+            return session;
         });
 
-        builder.registerTypeAdapter(OneDriveSession.class, new JsonSerializer<OneDriveSession>() {
-            @Override
-            public JsonElement serialize(OneDriveSession session, Type type, JsonSerializationContext jsonSerializationContext) {
-                JsonObject retValue = new JsonObject();
+        builder.registerTypeAdapter(OneDriveSession.class, (JsonSerializer<OneDriveSession>) (session, type, jsonSerializationContext) -> {
+            JsonObject retValue = new JsonObject();
 
-                retValue.add("accessToken", new JsonPrimitive(session.getAccessToken()));
-                retValue.add("refreshToken", new JsonPrimitive(session.getRefreshToken()));
+            retValue.add("accessToken", new JsonPrimitive(session.getAccessToken()));
+            retValue.add("refreshToken", new JsonPrimitive(session.getRefreshToken()));
 
-                retValue.add("clientID", new JsonPrimitive(session.getClientID()));
-                retValue.add("clientSecret", new JsonPrimitive(session.getClientSecret()));
-                retValue.add("expiresIn", new JsonPrimitive(session.getExpiresIn()));
-                retValue.add("lastRefresh", new JsonPrimitive(session.getLastRefresh()));
-                return retValue;
-            }
+            retValue.add("clientID", new JsonPrimitive(session.getClientID()));
+            retValue.add("clientSecret", new JsonPrimitive(session.getClientSecret()));
+            retValue.add("expiresIn", new JsonPrimitive(session.getExpiresIn()));
+            retValue.add("lastRefresh", new JsonPrimitive(session.getLastRefresh()));
+            return retValue;
         });
-        final Gson gson = builder.create();
+        Gson gson = builder.create();
         return gson;
     }
 
@@ -234,13 +221,12 @@ public class OneDriveSession implements Runnable {
             }
         }
 
-
-        final OneDriveSession session = builderGson().fromJson(json.toString(), OneDriveSession.class);
+        OneDriveSession session = builderGson().fromJson(json.toString(), OneDriveSession.class);
         session.setClient(new OkHttpClient());
         return session;
     }
 
-    public static void write(OneDriveSession that, File outputFile) throws IOException, OneDriveException {
+    public static void write(OneDriveSession that, File outputFile) throws IOException {
         that.refresh();
 
         String json = builderGson().toJson(that);
@@ -326,11 +312,7 @@ public class OneDriveSession implements Runnable {
 
     public String getAccessURL() {
         String scope = "";
-        try {
-            scope = URLEncoder.encode(getScopeString(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("Error while encoding scopeString to url, using UTF-8",e);
-        }
+        scope = URLEncoder.encode(getScopeString(), StandardCharsets.UTF_8);
         String uri = String.format("%s/oauth20_authorize.srf?client_id=%s&scope=%s&response_type=code", ENDPOINT, clientID, scope);
 
         if (this.redirect_uri != null) {
@@ -351,11 +333,12 @@ public class OneDriveSession implements Runnable {
                 '}';
     }
 
+    @Override
     public void run() {
         //initial delay
         try {
             Thread.sleep(refreshDelay);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
         //continuously refresh thread
         while (keepRefreshing) {
@@ -379,7 +362,7 @@ public class OneDriveSession implements Runnable {
                     } catch (OneDriveException e1) {
                         try {
                             Thread.sleep(500);
-                        } catch (InterruptedException e2) {
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -390,9 +373,10 @@ public class OneDriveSession implements Runnable {
                 //backoff after error
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e1) {
+                } catch (Exception ignored) {
                 }
             } catch (Exception e) {
+                logger.error(e);
             }
         }
 

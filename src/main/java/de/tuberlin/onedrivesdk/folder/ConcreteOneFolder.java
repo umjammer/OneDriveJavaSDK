@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.gson.annotations.Expose;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConflictBehavior;
 import de.tuberlin.onedrivesdk.common.OneItem;
@@ -27,6 +28,7 @@ import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
  */
 public class ConcreteOneFolder extends OneItem implements OneFolder {
 
+    @Expose
     private FolderProperty folder;
 
     private ConcreteOneFolder() {

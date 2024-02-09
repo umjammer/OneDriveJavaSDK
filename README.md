@@ -1,4 +1,8 @@
-[![Release](https://jitpack.io/v/umjammer/OneDriveJavaSDK.svg)](https://jitpack.io/#umjammer/OneDriveJavaSDK) [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
+[![Release](https://jitpack.io/v/umjammer/OneDriveJavaSDK.svg)](https://jitpack.io/#umjammer/OneDriveJavaSDK)
+[![Java CI](https://github.com/umjammer/OneDriveJavaSDK/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/OneDriveJavaSDK/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/umjammer/OneDriveJavaSDK/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/OneDriveJavaSDK/actions/workflows/codeql-analysis.yml)
+![Java](https://img.shields.io/badge/Java-17-b07219)
+[![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
 
 # OneDrive SDK
 
@@ -129,3 +133,7 @@ There are two exceptions that can occur while using the SDK. The one that can oc
 
 ## History
 This project was developed at TU Berlin during the [Cloud Prototyping](http://www.ise.tu-berlin.de/menue/teaching/summer_term_2015/cloud_prototyping/parameter/en/) course in the summer term of 2015 from [Tim Hinkes](https://github.com/Timmeey), [Andreas Salzmann](https://github.com/andi3) and [Sebastian Werner](https://github.com/tawalaya) under the supervision of [Markus Klems](http://www.ise.tu-berlin.de/menue/team/markus_klems_dipl-wi-ing/parameter/en/).
+
+## TODO
+
+ * log4j
