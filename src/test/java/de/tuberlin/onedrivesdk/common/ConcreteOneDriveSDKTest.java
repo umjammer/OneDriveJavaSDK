@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +21,7 @@ import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,6 +32,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class ConcreteOneDriveSDKTest {
+
+    static boolean localPropertiesExists() {
+            return java.nio.file.Files.exists(Paths.get("credentials.properties"));
+        }
 
     @Test
     @Disabled
@@ -89,6 +95,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testGetAllDrives() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         List<OneDrive> drives = api.getAllDrives();
@@ -106,6 +113,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testRootFolder() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneDrive drive = api.getDefaultDrive();
@@ -123,6 +131,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testFileNotFound() {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertThrows(IOException.class, () -> {
@@ -399,6 +408,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
+    @EnabledIf("localPropertiesExists")
     public void testFactory() {
         assertNotNull(new OneDriveFactory());
         assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), OneDriveScope.READWRITE));
