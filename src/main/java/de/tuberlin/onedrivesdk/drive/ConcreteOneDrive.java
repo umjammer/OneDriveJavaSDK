@@ -1,13 +1,14 @@
 package de.tuberlin.onedrivesdk.drive;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.List;
 
+import com.google.gson.reflect.TypeToken;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
-import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.common.OneDriveError;
-
+import de.tuberlin.onedrivesdk.folder.OneFolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -15,8 +16,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Implementation of the OneDrive Interface

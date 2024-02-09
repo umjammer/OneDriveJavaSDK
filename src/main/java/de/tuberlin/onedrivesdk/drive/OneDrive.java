@@ -1,6 +1,5 @@
 package de.tuberlin.onedrivesdk.drive;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ public interface OneDrive {
      * @throws IOException
      * @throws IOException
      */
-    OneFolder getRootFolder() throws IOException, OneDriveException;
+    OneFolder getRootFolder() throws IOException;
 
 
     /**

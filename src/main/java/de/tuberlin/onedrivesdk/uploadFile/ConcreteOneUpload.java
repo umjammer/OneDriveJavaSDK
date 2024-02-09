@@ -18,7 +18,6 @@ import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 import de.tuberlin.onedrivesdk.networking.OneResponse;
 import de.tuberlin.onedrivesdk.networking.PreparedRequest;
 import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
@@ -52,7 +51,7 @@ public class ConcreteOneUpload implements OneUpload {
             String filename,
             long size,
             Consumer<OneItem> finished,
-            OneDriveSDK api) throws IOException, OneDriveAuthenticationException {
+            OneDriveSDK api) throws IOException {
         checkNotNull(parentFolder);
         this.api = checkNotNull(api);
         this.size = size;
@@ -62,7 +61,7 @@ public class ConcreteOneUpload implements OneUpload {
     }
 
     @Override
-    public OutputStream upload() throws IOException, OneDriveException {
+    public OutputStream upload() throws IOException {
 
         return new OutputStream() {
             @Override

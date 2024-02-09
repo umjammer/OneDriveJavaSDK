@@ -159,7 +159,7 @@ public abstract class OneItem {
      * @param type OneItemType, can be used to define which type of items should be parsed
      * @return items from json
      * @throws ParseException if the JSON can not be parsed
-     * @throws OneDriveException if the json dose not contain a 'value' attribute
+     * @throws OneDriveException if the json does not contain a 'value' attribute
      */
     public static List<OneItem> parseItemsFromJson(String json, OneItemType type) throws IOException {
         ArrayList<OneItem> itemList = new ArrayList<>();

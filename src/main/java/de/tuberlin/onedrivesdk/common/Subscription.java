@@ -12,11 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import de.tuberlin.onedrivesdk.OneDriveException;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 
 
 /**
@@ -52,7 +52,7 @@ public class Subscription {
      *
      * @param json JSON from the OneDrive API
      * @return OneItem
-     * @throws ParseException if the JSON can not be parsed
+     * @throws OneDriveException if the JSON can not be parsed
      * @throws OneDriveException if the JSON contains an OneDrive Error object from the API
      */
     public static Subscription fromJSON(String json) throws OneDriveException {
@@ -137,12 +137,12 @@ public class Subscription {
     }
 
     /** */
-    public Subscription update() throws IOException, OneDriveException, ParseException, InterruptedException  {
+    public Subscription update() throws IOException, ParseException, InterruptedException  {
         return api.updateSubscription(id);
     }
 
     /** */
-    public void delete() throws IOException, OneDriveException, ParseException, InterruptedException  {
+    public void delete() throws IOException, ParseException, InterruptedException  {
         api.deleteSubscription(id);
     }
 }

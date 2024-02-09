@@ -1,8 +1,6 @@
 package de.tuberlin.onedrivesdk.uploadFile;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +26,7 @@ public interface OneUploadFile extends Callable<OneFile> {
 	 * Gets something like an enum indication that the upload is either finished,running,paused,canceled...
 	 * @return upload status
 	 */
-	long uploadStatus() throws IOException, OneDriveException;
+	long uploadStatus() throws IOException;
 	
 	/**
 	 * Starts the upload, needs to be called to start the upload. Will throw exception when called while the download has already been started
@@ -36,7 +34,7 @@ public interface OneUploadFile extends Callable<OneFile> {
 	 * @return the OneFile handle for the finished file
 	 * @throws IOException 
 	 */
-	OneFile startUpload() throws IOException, OneDriveException;
+	OneFile startUpload() throws IOException;
 	
 	/**
 	 * Will pause the upload. Does nothing when called if the download is already paused
@@ -56,7 +54,7 @@ public interface OneUploadFile extends Callable<OneFile> {
 	 * Will block until file Upload is finished
 	 * @return the OneFile handle of the finished File or null on interruption
 	 */
-	OneUploadFile cancelUpload() throws IOException, OneDriveAuthenticationException;
+	OneUploadFile cancelUpload() throws IOException;
 	
 	/**
 	 * Gets the file handle of the file that is being uploaded 

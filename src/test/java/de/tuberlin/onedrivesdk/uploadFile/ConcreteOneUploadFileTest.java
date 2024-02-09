@@ -20,7 +20,7 @@ import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
+
 
 public class ConcreteOneUploadFileTest {
 
@@ -45,7 +45,7 @@ public class ConcreteOneUploadFileTest {
     public void testCreateUploadSession() throws InstantiationException,
             IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException,
-            SecurityException, NoSuchFieldException, ClassNotFoundException, IOException,OneDriveAuthenticationException {
+            SecurityException, NoSuchFieldException, ClassNotFoundException, IOException {
 
         UploadSession upSession = getEmptyUploadSession();
 

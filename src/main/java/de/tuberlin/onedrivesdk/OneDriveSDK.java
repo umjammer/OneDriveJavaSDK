@@ -28,7 +28,6 @@ public interface OneDriveSDK {
      *
      * @return OneDrive default drive
      * @throws IOException
-     * @throws IOException
      */
     OneDrive getDefaultDrive() throws IOException;
 
@@ -37,7 +36,6 @@ public interface OneDriveSDK {
      *
      * @param driveId the drive id
      * @return OneDrive
-     * @throws IOException
      * @throws IOException
      */
     OneDrive getDrive(String driveId) throws IOException;
@@ -56,7 +54,6 @@ public interface OneDriveSDK {
      *
      * @return root folder
      * @throws IOException
-     * @throws IOException
      */
     OneFolder getRootFolder() throws IOException;
 
@@ -65,7 +62,6 @@ public interface OneDriveSDK {
      *
      * @param drive
      * @return root folder
-     * @throws IOException
      * @throws IOException
      */
     OneFolder getRootFolder(OneDrive drive) throws IOException;
@@ -76,7 +72,6 @@ public interface OneDriveSDK {
      *
      * @param id
      * @return OneFolder
-     * @throws IOException
      * @throws IOException
      */
     OneFolder getFolderById(String id) throws IOException;
@@ -207,7 +202,7 @@ public interface OneDriveSDK {
     /**
      * used to start a thread that request a new authentication token
      *
-     * @see OneDriveSession#refreshDelay
+     * @see "OneDriveSession#refreshDelay"
      * @see OneDriveSession#startRefreshThread(Callback...)
      */
     void startSessionAutoRefresh(Callback... callbacks);
@@ -231,8 +226,8 @@ public interface OneDriveSDK {
      * Rename a file in OneDrive to a location in OneDrive.
      *
      * @param id OneDrive item id of the file to be copied
-     * @param parentId id of the source folder
-     * @param newName the new name of the copied file
+     * @param id2 id of the source folder
+     * @param name the new name of the copied file
      * @return OneItem the renamed item
      * @throws IOException
      * @throws OneDriveException
@@ -242,7 +237,7 @@ public interface OneDriveSDK {
     /**
      * Download a file from OneDrive by id and returns the byte[].
      *
-     * @param fileID the OneDrive file id
+     * @param id the OneDrive file id
      * @return byte[]
      * @throws OneDriveAuthenticationException
      */
@@ -251,7 +246,7 @@ public interface OneDriveSDK {
     /**
      * Download a file from OneDrive by id and returns the InputStream.
      *
-     * @param fileID the OneDrive file id
+     * @param id the OneDrive file id
      * @return InputStream
      * @throws OneDriveAuthenticationException
      */
@@ -261,8 +256,8 @@ public interface OneDriveSDK {
      * Copy and rename a file in OneDrive to a location in OneDrive.
      *
      * @param id            OneDrive item id of the file to be copied
-     * @param destinationId id of the target folder
-     * @param newName       the new name of the copied file
+     * @param id2 id of the target folder
+     * @param name       the new name of the copied file
      * @return OneFile the copied file
      * @throws IOException
      */
@@ -272,7 +267,7 @@ public interface OneDriveSDK {
      * Move a file in OneDrive.
      *
      * @param id            OneDrive item id of the file to be moved
-     * @param destinationId id of the target folder
+     * @param id2 id of the target folder
      * @return OneItem
      * @throws IOException
      * @throws OneDriveException
@@ -282,8 +277,8 @@ public interface OneDriveSDK {
     /**
      * Create a new upload session in preparation of a file upload.
      *
-     * @param folder   on OneDrive
-     * @param fileName on OneDrive
+     * @param parentFolder   on OneDrive
+     * @param filename on OneDrive
      * @return UploadSession
      * @throws IOException
      */
@@ -292,7 +287,7 @@ public interface OneDriveSDK {
     /**
      * Perform the HTTP request to the OneDrive API.
      *
-     * @param preparedRequest
+     * @param request
      * @return OneResponse
      * @throws IOException
      */
@@ -301,8 +296,8 @@ public interface OneDriveSDK {
     /**
      * Perform the HTTP request to the OneDrive API with a json body.
      *
-     * @param url
-     * @param method
+     * @param uploadUrl
+     * @param get
      * @param json   body of the request
      * @return OneResponse
      * @throws IOException
@@ -332,7 +327,7 @@ public interface OneDriveSDK {
      * Gets all children of the given folder depending on the type.
      *
      * @param concreteOneFolder
-     * @param type
+     * @param all
      * @return children
      * @throws OneDriveException
      */
@@ -341,7 +336,7 @@ public interface OneDriveSDK {
     /**
      * Create a new folder in OneDrive.
      *
-     * @param folder the parent folder
+     * @param concreteOneFolder the parent folder
      * @param name   name of the new folder
      * @return OneFolder the newly created folder
      * @throws IOException
@@ -352,7 +347,7 @@ public interface OneDriveSDK {
     /**
      * Create a new folder in OneDrive and define the behavior on folder name conflict.
      *
-     * @param folder   the parent folder
+     * @param concreteOneFolder   the parent folder
      * @param name
      * @param behavior
      * @return OneFolder the newly created folder

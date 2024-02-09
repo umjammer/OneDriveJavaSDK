@@ -26,6 +26,7 @@ public class ConcreteOneFile extends OneItem implements OneFile {
         return "(F) " + name;
     }
 
+    @Override
     public OneDownloadFile download(File targetFile) throws FileNotFoundException {
         return new ConcreteOneDownloadFile(this,api,targetFile);
     }

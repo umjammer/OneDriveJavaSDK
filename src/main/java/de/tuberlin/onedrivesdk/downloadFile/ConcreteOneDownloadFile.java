@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
+
 
 /**
  * Implementation of OneDownloadFile
@@ -37,7 +37,7 @@ public class ConcreteOneDownloadFile implements OneDownloadFile {
     }
 
     @Override
-    public void startDownload() throws IOException, OneDriveAuthenticationException {
+    public void startDownload() throws IOException {
         RandomAccessFile destination = new RandomAccessFile(this.destinationFile, "rw");
         try {
             logger.info("Starting download of "+metadata.getName());

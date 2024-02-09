@@ -13,7 +13,6 @@ import java.io.InputStream;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
-import de.tuberlin.onedrivesdk.networking.OneDriveAuthenticationException;
 
 
 /**
@@ -35,7 +34,7 @@ public class ConcreteOneDownload implements OneDownload {
     }
 
     @Override
-    public InputStream getDownloadedInputStream() throws IOException, OneDriveAuthenticationException {
+    public InputStream getDownloadedInputStream() throws IOException {
         return api.downloadAsStream(metadata.getId());
     }
 }

@@ -48,5 +48,4 @@ public class PreparedRequest {
         this.body = body;
         return this;
     }
-
 }

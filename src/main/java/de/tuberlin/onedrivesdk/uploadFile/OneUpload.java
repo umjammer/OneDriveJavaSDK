@@ -3,7 +3,6 @@ package de.tuberlin.onedrivesdk.uploadFile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 
 /**
  * OneUpload.
@@ -19,5 +18,5 @@ public interface OneUpload {
 	 * @return the OneFile handle for the finished file
 	 * @throws IOException 
 	 */
-	OutputStream upload() throws IOException, OneDriveException;
+	OutputStream upload() throws IOException;
 }

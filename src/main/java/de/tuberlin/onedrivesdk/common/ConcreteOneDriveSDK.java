@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public List<OneDrive> getAllDrives() throws IOException, OneDriveException {
+    public List<OneDrive> getAllDrives() throws IOException {
         String requestURL = "drives/";
 
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.GET);
@@ -133,7 +134,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFolder getFolderById(String id) throws IOException, OneDriveException {
+    public OneFolder getFolderById(String id) throws IOException {
         String requestURL = "drive/items/%s";
 
         PreparedRequest request = new PreparedRequest(String.format(requestURL, id), PreparedRequestMethod.GET);
@@ -152,7 +153,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFolder getRootFolder() throws IOException, OneDriveException {
+    public OneFolder getRootFolder() throws IOException {
         return getRootFolder(null);
     }
 
@@ -175,7 +176,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFile getFileById(String id) throws IOException, OneDriveException {
+    public OneFile getFileById(String id) throws IOException {
         String requestURL = "drive/items/%s";
 
         PreparedRequest request = new PreparedRequest(String.format(requestURL, id), PreparedRequestMethod.GET);
@@ -188,7 +189,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneFile getFileByPath(String pathToFile) throws IOException, OneDriveException {
+    public OneFile getFileByPath(String pathToFile) throws IOException {
         return getFileByPath(pathToFile, null);
     }
 
@@ -243,7 +244,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public void authenticate(String oAuthCode) throws IOException, OneDriveException {
+    public void authenticate(String oAuthCode) throws IOException {
         OneDriveSession.authorizeSession(this.session, oAuthCode);
     }
 
@@ -354,7 +355,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     }
 
     @Override
-    public OneResponse makeRequest(PreparedRequest preparedRequest) throws IOException, OneDriveAuthenticationException {
+    public OneResponse makeRequest(PreparedRequest preparedRequest) throws IOException {
 
         if(!this.session.isAuthenticated()){
             throw new OneDriveAuthenticationException("Session is no longer valid. Look for a failure of the refresh Thread in the log.");
@@ -460,8 +461,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         if (path.equals("/")) {
             return "root/";
         } else {
-            path = this.removeSlashes(path);
-            return "root:/" + URLEncoder.encode(path, "utf-8") + ":/";
+            path = removeSlashes(path);
+            return "root:/" + URLEncoder.encode(path, StandardCharsets.UTF_8) + ":/";
         }
     }
 
@@ -558,6 +559,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         return (OneFile) ConcreteOneFile.fromJSON(response.getBodyAsString()).setApi(this);
     }
 
+    @Override
     public OneItem move(String id, String destinationId) throws IOException {
         ParentReference reference = new ParentReference();
         reference.setId(destinationId);
@@ -610,10 +612,11 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * TODO is it right? because w/o itemId doesn't work.
      * @see "https://github.com/rgregg/WebhookValidationResponder/blob/0ef1e93cf50d03c7a285254273a49c45dca5d9b8/OneDriveWebhookTranslator/Controllers/SubscriptionController.cs"
      */
+    @Override
     public Subscription subscribe(String notificationUrl, String clientState) throws IOException {
         SubscriptionRequest requestBean = new SubscriptionRequest(notificationUrl, clientState);
 
-        String url = String.format("drive/root/subscriptions");
+        String url = "drive/root/subscriptions";
         String json = gson.toJson(requestBean);
 
         PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.POST);

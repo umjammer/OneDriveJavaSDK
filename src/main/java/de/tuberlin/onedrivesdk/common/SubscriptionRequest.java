@@ -8,7 +8,6 @@ package de.tuberlin.onedrivesdk.common;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -23,7 +22,7 @@ import java.util.TimeZone;
  */
 class SubscriptionRequest {
 
-    protected List<String> scenarios = Arrays.asList("Webhook");
+    protected List<String> scenarios = List.of("Webhook");
     // "https://docs.microsoft.com/ja-jp/graph/api/subscription-post-subscriptions?view=graph-rest-1.0&tabs=http"
     // doesn't work
 //    protected String changeType = "updated";

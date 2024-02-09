@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.TestSDKFactory;
 import de.tuberlin.onedrivesdk.file.OneFile;
@@ -23,7 +22,7 @@ public class ConcreteOneUploadFileIntegrationTest {
     @Test
     public void simpleUploadTest() throws InstantiationException,
             IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException, IOException, InterruptedException {
+            InvocationTargetException, NoSuchFieldException, SecurityException, IOException, InterruptedException {
         OneDriveSDK api = TestSDKFactory.getInstance();
         File file = new File("src/test/resources/uploadTest.jpg");
         OneFolder folder = api.getRootFolder();
@@ -37,7 +36,7 @@ public class ConcreteOneUploadFileIntegrationTest {
     }
 
     @AfterEach
-    public void removeTestFile() throws IOException, OneDriveException {
+    public void removeTestFile() throws IOException {
         if(uploadedFile!=null) {
             uploadedFile.delete();
             uploadedFile=null;
