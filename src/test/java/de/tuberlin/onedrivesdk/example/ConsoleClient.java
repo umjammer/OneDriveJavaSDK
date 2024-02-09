@@ -235,7 +235,7 @@ public class ConsoleClient {
         System.exit(0);
     }
 
-    private <T> Map<String, T> convertToMap(List<T> listToConvert, Type T) {
+    private static <T> Map<String, T> convertToMap(List<T> listToConvert, Type T) {
         Map<String, T> tmpMap = Maps.newHashMapWithExpectedSize(listToConvert
                 .size());
         for (int i = 0; i < listToConvert.size(); i++) {
@@ -244,7 +244,7 @@ public class ConsoleClient {
         return tmpMap;
     }
 
-    private void printItemList(Map<String, ?> map) {
+    private static void printItemList(Map<String, ?> map) {
         List<String> itemKeys = new ArrayList<>(map.keySet());
         Collections.sort(itemKeys);
         for (String key : itemKeys) {

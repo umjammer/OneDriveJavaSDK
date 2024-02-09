@@ -23,9 +23,7 @@ public class ConcreteOneDownloadIntegrationTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void simpleDownloadTest() throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchFieldException, SecurityException, IOException, InterruptedException {
+    public void simpleDownloadTest() throws Exception {
         OneDriveSDK api = TestSDKFactory.getInstance();
 
         OneFolder folder = api.getFolderByPath("/IntegrationTesting/FolderForDownload");

@@ -29,9 +29,7 @@ public class ConcreteOneUploadFileTest {
     OneDriveSDK mockApi;
 
     @Test
-    public void getNextRange() throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchFieldException, SecurityException, OneDriveException {
+    public void getNextRange() throws Exception {
 
         UploadSession upSession = getEmptyUploadSession();
 
@@ -42,10 +40,7 @@ public class ConcreteOneUploadFileTest {
     }
 
     @Test
-    public void testCreateUploadSession() throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException,
-            SecurityException, NoSuchFieldException, ClassNotFoundException, IOException {
+    public void testCreateUploadSession() throws Exception {
 
         UploadSession upSession = getEmptyUploadSession();
 
@@ -88,10 +83,7 @@ public class ConcreteOneUploadFileTest {
         mockApi = mock(OneDriveSDK.class);
     }
 
-    public static Field getUnaccessableField(String fieldName, Class<?> clazz) throws NoSuchFieldException,
-                                                                               SecurityException,
-                                                                               IllegalArgumentException,
-                                                                               IllegalAccessException {
+    public static Field getUnaccessableField(String fieldName, Class<?> clazz) throws Exception {
 
         Field privateField = clazz.getDeclaredField(fieldName);
 
@@ -100,7 +92,7 @@ public class ConcreteOneUploadFileTest {
         return privateField;
     }
 
-    private static UploadSession getEmptyUploadSession() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private static UploadSession getEmptyUploadSession() throws Exception {
         // get constructor that takes a String as argument
         @SuppressWarnings("unchecked")
         Constructor<UploadSession> constructor = (Constructor<UploadSession>) UploadSession.class

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -19,7 +18,6 @@ import de.tuberlin.onedrivesdk.drive.OneDrive;
 import de.tuberlin.onedrivesdk.file.OneFile;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 import de.tuberlin.onedrivesdk.uploadFile.OneUploadFile;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +33,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled
-    public void uploadBigFile() throws IOException, NoSuchAlgorithmException, InterruptedException {
+    public void uploadBigFile() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
 
         int fileLength = 10000;
@@ -74,7 +72,7 @@ public class ConcreteOneDriveSDKTest {
         assertEquals(sourceHash.toString().toUpperCase(), downloadedHash.toString().toUpperCase());
     }
 
-    private static void generateFile(String fileName, long fileLength) throws IOException {
+    private static void generateFile(String fileName, long fileLength) throws Exception {
         File f = new File(fileName);
 
         OutputStream out = new FileOutputStream(f);
@@ -91,7 +89,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
-    public void testGetAllDrives() throws IOException {
+    public void testGetAllDrives() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         List<OneDrive> drives = api.getAllDrives();
         assertEquals(1, drives.size());
@@ -100,7 +98,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetDefaultDrive() throws IOException {
+    public void testGetDefaultDrive() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneDrive drive = api.getDefaultDrive();
         assertNotNull(drive);
@@ -108,7 +106,7 @@ public class ConcreteOneDriveSDKTest {
     }
 
     @Test
-    public void testRootFolder() throws IOException {
+    public void testRootFolder() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneDrive drive = api.getDefaultDrive();
         OneFolder rootFolder = api.getRootFolder(drive);
@@ -119,7 +117,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFileByPath() throws IOException {
+    public void testGetFileByPath() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertEquals("Image.jpg", api.getFileByPath("/IntegrationTesting/Image.jpg").getName());
     }
@@ -134,35 +132,35 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFileById() throws IOException {
+    public void testGetFileById() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertEquals("Image.jpg", api.getFileById("3FB7BC4F1939EE71!105").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testFolderByPath() throws IOException {
+    public void testFolderByPath() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertEquals("SecondLevelFolder", api.getFolderByPath("/IntegrationTesting/SecondLevelFolder").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetFolderById() throws IOException {
+    public void testGetFolderById() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertEquals("root", api.getFolderById("3FB7BC4F1939EE71!103").getName());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetDriveById() throws IOException {
+    public void testGetDriveById() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         assertEquals("3fb7bc4f1939ee71", api.getDrive("3fb7bc4f1939ee71").getId());
     }
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildCount() throws IOException {
+    public void testChildCount() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
@@ -171,7 +169,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildFolder() throws IOException {
+    public void testChildFolder() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
@@ -198,7 +196,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testChildFiles() throws IOException {
+    public void testChildFiles() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
@@ -225,7 +223,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testGetChildren() throws IOException {
+    public void testGetChildren() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("/IntegrationTesting");
 
@@ -248,7 +246,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testCreateAndDeleteFolder() throws IOException {
+    public void testCreateAndDeleteFolder() throws Exception {
         String folderName = "TestFolder";
         String path = "/IntegrationTesting/FolderForFolderCreation";
 
@@ -278,7 +276,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testRefresh() throws IOException {
+    public void testRefresh() throws Exception {
         String folderName = "TestFolder";
         String path = "/IntegrationTesting/FolderForFolderCreation";
 
@@ -346,7 +344,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testCopyFile() throws IOException, ParseException, InterruptedException {
+    public void testCopyFile() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFile file = api.getFileByPath("/IntegrationTesting/FolderForMoveAndCopy/Image.jpg");
         OneFolder targetFolder = api.getFolderByPath("/IntegrationTesting/FolderForMoveAndCopy/CopyTarget");
@@ -366,7 +364,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testMoveFile() throws IOException, ParseException, InterruptedException {
+    public void testMoveFile() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFile file = api.getFileByPath("/IntegrationTesting/FolderForMoveAndCopy/ImageForMove.jpg");
         OneFolder sourceFolder = file.getParentFolder();
@@ -394,7 +392,7 @@ public class ConcreteOneDriveSDKTest {
 
     @Test
     @Disabled("do integration test on project vavi-nio-file-onedrive")
-    public void testParentFolder() throws IOException {
+    public void testParentFolder() throws Exception {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         OneFolder folder = api.getFolderByPath("IntegrationTesting");
         assertEquals("root", folder.getParentFolder().getName());
