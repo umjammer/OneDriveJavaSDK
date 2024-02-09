@@ -350,7 +350,9 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
     public OneResponse makeRequest(String url, PreparedRequestMethod method, String json) throws IOException {
         PreparedRequest request = new PreparedRequest(url, method);
         request.addHeader("Content-Type", "application/json");
+        if (json != null) {
         request.setBody(json.getBytes());
+        }
         return makeRequest(request);
     }
 
