@@ -149,5 +149,3 @@ public class Subscription {
         api.deleteSubscription(id);
     }
 }
-
-/* */

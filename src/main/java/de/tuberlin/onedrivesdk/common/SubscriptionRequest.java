@@ -59,5 +59,3 @@ class SubscriptionUpdateRequest {
     @Expose
     protected String expirationDateTime = SubscriptionRequest.getExpireTime();
 }
-
-/* */
