@@ -25,16 +25,17 @@ import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
  */
 public class ConcreteOneUploadFile implements OneUploadFile {
 
-    private static final int chunkSize = 320 * 1024 * 30; // (use a multiple value of 320KB, best practice of dev.onedrive)
     private static final Logger logger = getLogger(ConcreteOneUploadFile.class.getName());
 
+    /** (use a multiple value of 320KB, best practice of dev.onedrive) */
+    private static final int chunkSize = 320 * 1024 * 30;
     private final ReentrantLock shouldRun = new ReentrantLock(true);
-    private File fileToUpload;
+    private final File fileToUpload;
     private OneDriveSDK api;
     private boolean canceled = false;
     private boolean finished = false;
     private UploadSession uploadSession;
-    private RandomAccessFile randFile;
+    private final RandomAccessFile randFile;
     private String uploadUrl = "";
 
     public ConcreteOneUploadFile(OneFolder parentFolder,

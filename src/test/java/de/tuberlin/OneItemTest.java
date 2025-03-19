@@ -1,44 +1,37 @@
 package de.tuberlin;
 
-import java.util.List;
-
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneItem;
 import de.tuberlin.onedrivesdk.common.OneItemType;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
  * Created by Andi on 10.05.2015.
  */
-public class OneItemTest {
+class OneItemTest {
 
     @Test
-    public void testNullJsonParseItems() {
+    void testNullJsonParseItems() {
         assertThrows(NullPointerException.class, () -> OneItem.parseItemsFromJson(null));
     }
 
     @Test
-    public void testNullJsonParse() {
+    void testNullJsonParse() {
         assertThrows(NullPointerException.class, () -> OneItem.fromJSON(null));
     }
 
     @Test
-    public void testParseEmptyOneItem() {
+    void testParseEmptyOneItem() throws Exception {
         String json = "{}";
-        OneItem folder = null;
-        try {
-            folder = OneItem.fromJSON(json);
-        } catch (OneDriveException e) {
-            fail();
-        }
+        OneItem folder = OneItem.fromJSON(json);
 
         assertEquals("", folder.getId());
         assertEquals("", folder.getName());
@@ -53,118 +46,67 @@ public class OneItemTest {
     }
 
     @Test
-    public void testParseEmptyOneItems() {
+    void testParseEmptyOneItems() throws Exception {
         String json = "{\"value\":[{},{\"file\":{}}]}";
-        List<OneItem> items = null;
-        try {
-            items = OneItem.parseItemsFromJson(json);
-        } catch (Exception e) {
-            fail();
-        }
+        List<OneItem> items = OneItem.parseItemsFromJson(json);
         assertEquals(2, items.size());
     }
 
     @Test
-    public void testParseEmptyOneFiles() {
+    void testParseEmptyOneFiles() throws Exception {
         String json = "{\"value\":[{},{\"file\":{}}]}";
-        List<OneItem> items = null;
-        try {
-            items = OneItem.parseItemsFromJson(json, OneItemType.FILE);
-        } catch (Exception e) {
-            fail();
-        }
+        List<OneItem> items = OneItem.parseItemsFromJson(json, OneItemType.FILE);
         assertEquals(1, items.size());
     }
 
     @Test
-    public void testParseEmptyOneFolder() {
+    void testParseEmptyOneFolder() throws Exception {
         String json = "{\"value\":[{},{\"file\":{}}]}";
-        List<OneItem> items = null;
-        try {
-            items = OneItem.parseItemsFromJson(json, OneItemType.FOLDER);
-        } catch (Exception e) {
-            fail();
-        }
+        List<OneItem> items = OneItem.parseItemsFromJson(json, OneItemType.FOLDER);
         assertEquals(1, items.size());
     }
 
     @Test
-    public void testParseCorruptItems() {
+    void testParseCorruptItems() {
         String json = "{\"val\":[{},{\"file\":{}}]}";
-        List<OneItem> items = null;
-        try {
-            items = OneItem.parseItemsFromJson(json, OneItemType.ALL);
-            fail();
-        } catch (OneDriveException e) {
-
-        } catch (Exception e){
-            fail(e.getMessage());
-        }
+        assertThrows(OneDriveException.class, () -> {
+            OneItem.parseItemsFromJson(json, OneItemType.ALL);
+        });
     }
 
     @Test
-    public void testParseDate() {
+    void testParseDate() throws Exception {
         String json = "{\"createdDateTime\":\"2015-05-01T10:30:19.55Z\"}";
-        OneItem item = null;
-        try {
-            item = OneItem.fromJSON(json);
-        } catch (Exception e) {
-            fail();
-        }
+        OneItem item = OneItem.fromJSON(json);
         assertEquals(1430476219L, item.getCreatedDateTime());
 
         json = "{\"createdDateTime\":\"2015-05-01T\"}";
-        try {
-            item = OneItem.fromJSON(json);
-        } catch (Exception e) {
-            fail();
-        }
+        item = OneItem.fromJSON(json);
         assertEquals(1430438400L, item.getCreatedDateTime());
     }
 
     @Test
-    public void setNullApi() {
-        OneItem item = null;
-        try {
-            item = OneItem.fromJSON("{}");
-        } catch (Exception e) {
-            fail();
-        }
-        try {
+    void setNullApi() throws Exception {
+        OneItem item = OneItem.fromJSON("{}");
+        assertThrows(OneDriveException.class, () -> {
             item.setApi(null);
-            fail();
-        } catch (OneDriveException e) {
-        }
+        });
     }
 
     @Test
-    public void testSetApi() {
+    void testSetApi() throws Exception {
         OneDriveSDK api = Mockito.mock(ConcreteOneDriveSDK.class);
-        OneItem item = null;
-        try {
-            item = OneItem.fromJSON("{}");
-        } catch (Exception e){
-            fail();
-        }
-        try {
-            item.setApi(api);
-        } catch (Exception e){
-            fail();
-        }
+        OneItem item = OneItem.fromJSON("{}");
+        item.setApi(api);
     }
 
     @Test
-    public void testDeleteItem() {
+    void testDeleteItem() throws Exception {
         OneDriveSDK api = Mockito.mock(ConcreteOneDriveSDK.class);
-        OneItem item = null;
-        try {
-            item = OneItem.fromJSON("{}");
+        OneItem item = OneItem.fromJSON("{}");
 
-            Mockito.doReturn(true).when(api).deleteItem(item);
-            item.setApi(api);
-            item.delete();
-        } catch (Exception e){
-            fail();
-        }
+        Mockito.doReturn(true).when(api).deleteItem(item);
+        item.setApi(api);
+        item.delete();
     }
 }

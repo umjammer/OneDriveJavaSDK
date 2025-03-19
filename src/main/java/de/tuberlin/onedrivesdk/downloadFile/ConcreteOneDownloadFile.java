@@ -39,15 +39,10 @@ public class ConcreteOneDownloadFile implements OneDownloadFile {
 
     @Override
     public void startDownload() throws IOException {
-        RandomAccessFile destination = new RandomAccessFile(this.destinationFile, "rw");
-        try {
+        try (RandomAccessFile destination = new RandomAccessFile(this.destinationFile, "rw")) {
             logger.log(Level.INFO, "Starting download of " + metadata.getName());
             destination.write(api.download(metadata.getId()));
         } finally {
-            try {
-                destination.close();
-            } catch (IOException e) {
-            }
             logger.log(Level.INFO, "Finished download of " + this.metadata.getName());
         }
     }
