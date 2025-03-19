@@ -119,7 +119,7 @@ public class OneItemTest {
         } catch (Exception e) {
             fail();
         }
-        assertEquals(0L, item.getCreatedDateTime());
+        assertEquals(1430438400L, item.getCreatedDateTime());
     }
 
     @Test

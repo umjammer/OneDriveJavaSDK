@@ -3,7 +3,9 @@ package de.tuberlin.onedrivesdk.common;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -300,8 +302,12 @@ public abstract class OneItem {
      */
     public long getCreatedDateTime() {
         try {
-            if (createdDateTime != null) {
-                return LocalDateTime.parse(createdDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
+            if (createdDateTime != null && !createdDateTime.isEmpty()) {
+logger.log(Level.TRACE, "createdDateTime: " + createdDateTime + ", " + createdDateTime.length());
+                if (createdDateTime.length() <= 11)
+                    return LocalDate.parse(createdDateTime.replaceFirst("[ZT]$", "")).toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
+                else
+                    return LocalDateTime.parse(createdDateTime.replaceFirst("[ZT]$", "")).toEpochSecond(ZoneOffset.UTC);
             }
         } catch (DateTimeParseException e) {
 logger.log(Level.WARNING, e.getMessage() + " " + createdDateTime, e);
@@ -325,7 +331,7 @@ logger.log(Level.WARNING, e.getMessage() + " " + createdDateTime, e);
      */
     public long getLastModifiedDateTime() {
         try {
-            if (lastModifiedDateTime != null) {
+            if (lastModifiedDateTime != null && !lastModifiedDateTime.isEmpty()) {
                 return LocalDateTime.parse(lastModifiedDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
             }
         } catch (DateTimeParseException e) {
@@ -431,7 +437,6 @@ logger.log(Level.WARNING, e.getMessage() + " " + lastModifiedDateTime);
      * @return boolean
      */
     public abstract boolean isFolder();
-
 
     /**
      * Rename this file in the target folder.
