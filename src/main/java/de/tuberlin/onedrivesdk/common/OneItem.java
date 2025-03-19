@@ -1,6 +1,8 @@
 package de.tuberlin.onedrivesdk.common;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
@@ -10,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.annotations.Expose;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,6 +28,7 @@ import de.tuberlin.onedrivesdk.folder.ConcreteOneFolder;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
 
 import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -35,7 +36,7 @@ import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
  */
 public abstract class OneItem {
 
-    private static final Logger logger = LogManager.getLogger(OneItem.class);
+    private static final Logger logger = getLogger(OneItem.class.getName());
 
     /**
      * The SDK object.
@@ -303,7 +304,7 @@ public abstract class OneItem {
                 return LocalDateTime.parse(createdDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
             }
         } catch (DateTimeParseException e) {
-logger.warn(e.getMessage() + " " + createdDateTime);
+logger.log(Level.WARNING, e.getMessage() + " " + createdDateTime, e);
         }
         return 0;
     }
@@ -328,7 +329,7 @@ logger.warn(e.getMessage() + " " + createdDateTime);
                 return LocalDateTime.parse(lastModifiedDateTime.replaceFirst("Z$", "")).toEpochSecond(ZoneOffset.UTC);
             }
         } catch (DateTimeParseException e) {
-logger.warn(e.getMessage() + " " + lastModifiedDateTime);
+logger.log(Level.WARNING, e.getMessage() + " " + lastModifiedDateTime);
         }
         return 0;
     }

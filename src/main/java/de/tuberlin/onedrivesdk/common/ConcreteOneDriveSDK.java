@@ -3,6 +3,8 @@ package de.tuberlin.onedrivesdk.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,8 +17,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.GsonBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -43,13 +43,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * This class provides the functionality to authenticate to OneDrive and handles the communication.
  */
 public class ConcreteOneDriveSDK implements OneDriveSDK {
 
-    private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
+    private static final Logger logger = getLogger(OneDriveSession.class.getName());
+
     public static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     private String baseUrl = "https://api.onedrive.com/v1.0/";
@@ -368,7 +371,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         RequestBody body = null;
 
         if (preparedRequest.getBody() != null) {
-            body = RequestBody.create(null, preparedRequest.getBody());
+            body = RequestBody.create(preparedRequest.getBody(), null);
         }
 
         if (isCompleteURL(preparedRequest.getPath())) {
@@ -377,8 +380,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
             url = String.format("%s%s?access_token=%s", this.baseUrl, preparedRequest.getPath(), session.getAccessToken());
         }
 
-        //logger.debug(String.format("making request to %s",url));
-        //logger.debug(String.format("making request to %s",url), new Exception("*** DUMMY ***"));
+        //logger.log(Level.DEBUG, String.format("making request to %s",url));
+        //logger.log(Level.DEBUG, String.format("making request to %s",url), new Exception("*** DUMMY ***"));
 
         Request.Builder builder = new Request.Builder().method(preparedRequest.getMethod(), body).url(url);
 
@@ -625,8 +628,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.POST);
         request.addHeader("Content-Type", "application/json");
         request.setBody(json.getBytes());
-logger.info(url);
-logger.info(json);
+logger.log(Level.INFO, url);
+logger.log(Level.INFO, json);
 
         OneResponse response = this.makeRequest(request);
         if (response.getStatusCode() != 201) {
@@ -652,8 +655,8 @@ logger.info(json);
         PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.PATCH);
         request.addHeader("Content-Type", "application/json");
         request.setBody(json.getBytes());
-logger.info(url);
-logger.info(json);
+logger.log(Level.INFO, url);
+logger.log(Level.INFO, json);
 
         OneResponse response = this.makeRequest(request);
         if (response.getStatusCode() != 200) {
@@ -672,7 +675,7 @@ logger.info(json);
     public void deleteSubscription(String subscriptionId) throws IOException {
         String url = String.format("drive/root/subscriptions/%s", subscriptionId);
 
-logger.info(url);
+logger.log(Level.INFO, url);
         PreparedRequest request = new PreparedRequest(url, PreparedRequestMethod.DELETE);
 
         OneResponse response = this.makeRequest(request);

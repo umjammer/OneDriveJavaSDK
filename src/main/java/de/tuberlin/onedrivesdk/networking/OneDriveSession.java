@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -13,8 +15,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,13 +37,15 @@ import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.common.ExceptionEventHandler;
 import de.tuberlin.onedrivesdk.common.OneDriveScope;
 
+import static java.lang.System.getLogger;
+
+
 /**
  * Handel's authentication and continues refresh of the accessToken.
  */
 public class OneDriveSession implements Runnable {
 
-
-    private static final Logger logger = LogManager.getLogger(OneDriveSession.class);
+    private static final Logger logger = getLogger(OneDriveSession.class.getName());
 
     private final static String ENDPOINT = "https://login.live.com";
     private static final long refreshDelay = 3000 * 1000;//3000 sec to ms
@@ -87,7 +89,7 @@ public class OneDriveSession implements Runnable {
 
         this.refreshExceptionHandler = refreshExceptionHandler;
 
-        logger.info("initialize session for " + clientID);
+        logger.log(Level.INFO, "initialize session for " + clientID);
     }
 
     private OneDriveSession(OkHttpClient client, String clientID, String clientSecret, String redirectUri, OneDriveScope[] scopes) {
@@ -138,7 +140,7 @@ public class OneDriveSession implements Runnable {
         //Url of the second step of the Code-FLow guide
         String oAuthCodeRedeemURL = String.format("%s/oauth20_token.srf", ENDPOINT);
 
-        RequestBody oAuthCodeRedeemBody = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), messageBody);
+        RequestBody oAuthCodeRedeemBody = RequestBody.create(messageBody, MediaType.parse("application/x-www-form-urlencoded"));
         // Create request for remote resource.
         Request request = new Request.Builder()
                 .url(oAuthCodeRedeemURL)
@@ -172,7 +174,7 @@ public class OneDriveSession implements Runnable {
         } catch (Exception e) {
             throw new OneDriveAuthenticationException("A undefined error accrued during the authentication request.\n" + responseBody, e);
         }
-        logger.info("successfully authorized session for " + session.clientID);
+        logger.log(Level.INFO, "successfully authorized session for " + session.clientID);
     }
 
     private static Gson builderGson() {
@@ -342,7 +344,7 @@ public class OneDriveSession implements Runnable {
         }
         //continuously refresh thread
         while (keepRefreshing) {
-            logger.info("refreshing session");
+            logger.log(Level.INFO, "refreshing session");
             try {
                 refresh();
                 try {
@@ -354,7 +356,7 @@ public class OneDriveSession implements Runnable {
                 }
                 Thread.sleep(refreshDelay);
             } catch (OneDriveException e) {
-                logger.info("failed to refresh session - attempting recovery");
+                logger.log(Level.INFO, "failed to refresh session - attempting recovery");
                 long retryTime = System.currentTimeMillis() + 1000 * 30;
                 while (System.currentTimeMillis() <= retryTime && keepRefreshing) {
                     try {
@@ -366,7 +368,7 @@ public class OneDriveSession implements Runnable {
                         }
                     }
                 }
-                logger.error("could not refresh session", e);
+                logger.log(Level.ERROR, "could not refresh session", e);
                 if (refreshExceptionHandler != null) {
                     refreshExceptionHandler.handle(this, e);
                 }
@@ -376,7 +378,7 @@ public class OneDriveSession implements Runnable {
                 } catch (Exception ignored) {
                 }
             } catch (Exception e) {
-                logger.error(e);
+                logger.log(Level.ERROR, e.getMessage(), e);
             }
         }
 
@@ -389,7 +391,7 @@ public class OneDriveSession implements Runnable {
             this.callbacks = Arrays.asList(callbacks);
             this.refreshThread = Executors.newSingleThreadExecutor();
             this.refreshThread.submit(this);
-            logger.info("starting refresh thread");
+            logger.log(Level.INFO, "starting refresh thread");
         }
     }
 
@@ -397,7 +399,7 @@ public class OneDriveSession implements Runnable {
         if (this.refreshThread != null) {
             keepRefreshing = false;
             refreshThread.shutdownNow();
-            logger.info("stopping refresh thread");
+            logger.log(Level.INFO, "stopping refresh thread");
         }
     }
 }

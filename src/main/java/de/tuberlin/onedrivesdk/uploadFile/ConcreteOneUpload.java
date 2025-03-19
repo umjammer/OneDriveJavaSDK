@@ -3,14 +3,14 @@ package de.tuberlin.onedrivesdk.uploadFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+import static java.lang.System.getLogger;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -30,7 +30,7 @@ import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
  */
 public class ConcreteOneUpload implements OneUpload {
 
-    private static final Logger logger = LogManager.getLogger(ConcreteOneUpload.class);
+    private static final Logger logger = getLogger(ConcreteOneUpload.class.getName());
 
     private OneDriveSDK api;
 
@@ -77,14 +77,14 @@ public class ConcreteOneUpload implements OneUpload {
                     uploadChunk.addHeader("Content-Length", String.valueOf(content.length));
                     uploadChunk.addHeader("Content-Range", range);
 
-logger.trace("Uploading chunk: {}", range);
+logger.log(Level.TRACE, "Uploading chunk: {}", range);
                     OneResponse response = api.makeRequest(uploadChunk);
                     if (response.wasSuccess()) {
                         if (response.getStatusCode() == 200 || response.getStatusCode() == 201) {
                             // if last chunk upload was successful end the finished =
                             // true;
                             ConcreteOneFile finishedFile = gson.fromJson(response.getBodyAsString(), ConcreteOneFile.class);
-logger.info("finished upload");
+logger.log(Level.INFO, "finished upload");
                             finishedFile.setApi(api);
                             finished.accept(finishedFile);
                         } else {
@@ -94,16 +94,16 @@ logger.info("finished upload");
                         }
                     } else {
                         // TODO not tested
-logger.info("Something went wrong while uploading last chunk. Trying to fetch upload status from server to retry");
-logger.trace(response.getBodyAsString());
+logger.log(Level.INFO, "Something went wrong while uploading last chunk. Trying to fetch upload status from server to retry");
+logger.log(Level.TRACE, response.getBodyAsString());
                         response = api.makeRequest(uploadUrl, PreparedRequestMethod.GET, null);
 
                         if (response.wasSuccess()) {
                             uploadSession = gson.fromJson(response.getBodyAsString(), UploadSession.class);
-logger.debug("Fetched updated uploadSession. Server requests {} as next chunk", uploadSession.getNextRange());
+logger.log(Level.DEBUG, "Fetched updated uploadSession. Server requests {} as next chunk", uploadSession.getNextRange());
 
                         } else {
-logger.info("Something went wrong while uploading. Was unable to fetch the currentUpload session from the Server");
+logger.log(Level.INFO, "Something went wrong while uploading. Was unable to fetch the currentUpload session from the Server");
                             throw new OneDriveException(String
                                     .format("Could not get current upload status from Server, aborting. Message was: %s",
                                             response.getBodyAsString()));
