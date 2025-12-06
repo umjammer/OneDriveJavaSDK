@@ -3,13 +3,13 @@ package de.tuberlin.onedrivesdk.uploadFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+import static java.lang.System.getLogger;
 
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
@@ -25,15 +25,17 @@ import de.tuberlin.onedrivesdk.networking.PreparedRequestMethod;
  */
 public class ConcreteOneUploadFile implements OneUploadFile {
 
-    private static final int chunkSize = 320 * 1024 * 30; // (use a multiple value of 320KB, best practice of dev.onedrive)
-    private static final Logger logger = LogManager.getLogger(ConcreteOneUploadFile.class);
+    private static final Logger logger = getLogger(ConcreteOneUploadFile.class.getName());
+
+    /** (use a multiple value of 320KB, best practice of dev.onedrive) */
+    private static final int chunkSize = 320 * 1024 * 30;
     private final ReentrantLock shouldRun = new ReentrantLock(true);
-    private File fileToUpload;
+    private final File fileToUpload;
     private OneDriveSDK api;
     private boolean canceled = false;
     private boolean finished = false;
     private UploadSession uploadSession;
-    private RandomAccessFile randFile;
+    private final RandomAccessFile randFile;
     private String uploadUrl = "";
 
     public ConcreteOneUploadFile(OneFolder parentFolder,
@@ -110,9 +112,9 @@ public class ConcreteOneUploadFile implements OneUploadFile {
             uploadChunk.addHeader("Content-Length", (randFile.getFilePointer() - start) + "");
             uploadChunk.addHeader(
                     "Content-Range",
-                    String.format("bytes %s-%s/%s", start, randFile.getFilePointer() - 1, randFile.length()));
+                    "bytes %s-%s/%s".formatted(start, randFile.getFilePointer() - 1, randFile.length()));
 
-            logger.trace("Uploading chunk {} - {}", start, randFile.getFilePointer() - 1);
+            logger.log(Level.TRACE, "Uploading chunk {} - {}", start, randFile.getFilePointer() - 1);
             response = api.makeRequest(uploadChunk);
             if (response.wasSuccess()) {
                 if (response.getStatusCode()==200 || response.getStatusCode()==201) { // if last chunk upload was successful end the
@@ -126,18 +128,18 @@ public class ConcreteOneUploadFile implements OneUploadFile {
                     randFile.seek(uploadSession.getNextRange());
                 }
             } else {
-                logger.info("Something went wrong while uploading last chunk. Trying to fetch upload status from server to retry");
-                logger.trace(response.getBodyAsString());
+                logger.log(Level.INFO, "Something went wrong while uploading last chunk. Trying to fetch upload status from server to retry");
+                logger.log(Level.TRACE, response.getBodyAsString());
                 response = api.makeRequest(this.uploadUrl, PreparedRequestMethod.GET, null);
 
                 if (response.wasSuccess()) {
                     uploadSession = gson.fromJson(response.getBodyAsString(), UploadSession.class);
                     randFile.seek(uploadSession.getNextRange());
-                    logger.debug("Fetched updated uploadSession. Server requests {} as next chunk",uploadSession.getNextRange());
+                    logger.log(Level.DEBUG, "Fetched updated uploadSession. Server requests {} as next chunk",uploadSession.getNextRange());
 
                 } else {
                     canceled=true;
-                    logger.info("Something went wrong while uploading. Was unable to fetch the currentUpload session from the Server");
+                    logger.log(Level.INFO, "Something went wrong while uploading. Was unable to fetch the currentUpload session from the Server");
                     randFile.close();
                     throw new OneDriveException(
                             String.format("Could not get current upload status from Server, aborting. Message was: %s", response.getBodyAsString()));
@@ -147,7 +149,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
         }
 
         randFile.close();
-        logger.info("finished upload");
+        logger.log(Level.INFO, "finished upload");
 
         finishedFile.setApi(api);
         return finishedFile;
@@ -156,32 +158,32 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 
     @Override
     public OneUploadFile pauseUpload() {
-        logger.info("Pausing upload");
+        logger.log(Level.INFO, "Pausing upload");
         shouldRun.lock();
-        logger.info("Upload paused");
+        logger.log(Level.INFO, "Upload paused");
         return this;
     }
 
     @Override
     public OneUploadFile resumeUpload() {
-        logger.info("Resuming upload");
+        logger.log(Level.INFO, "Resuming upload");
         try {
             shouldRun.unlock();
-            logger.info("Upload resumed");
+            logger.log(Level.INFO, "Upload resumed");
         } catch (IllegalMonitorStateException e) {
-            logger.info("Trying to resume an already running download");
+            logger.log(Level.INFO, "Trying to resume an already running download");
         }
         return this;
     }
 
     @Override
     public OneUploadFile cancelUpload() throws IOException {
-        logger.info("Canceling upload");
+        logger.log(Level.INFO, "Canceling upload");
         this.canceled = true;
         if (uploadSession != null) {
             api.makeRequest(this.uploadUrl,
                     PreparedRequestMethod.DELETE, "");
-            logger.info("Upload was canceled");
+            logger.log(Level.INFO, "Upload was canceled");
         }
         return this;
     }
@@ -193,7 +195,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
 
     @Override
     public OneFile call() throws IOException {
-        logger.info("Starting upload");
+        logger.log(Level.INFO, "Starting upload");
         return startUpload();
     }
 }

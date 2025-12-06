@@ -5,12 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.file.ConcreteOneFile;
 import de.tuberlin.onedrivesdk.file.OneFile;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -19,7 +20,7 @@ import de.tuberlin.onedrivesdk.file.OneFile;
  */
 public class ConcreteOneDownloadFile implements OneDownloadFile {
 
-    private static final Logger logger = LogManager.getLogger(ConcreteOneDownloadFile.class);
+    private static final Logger logger = getLogger(ConcreteOneDownloadFile.class.getName());
 
     private final OneFile metadata;
     private final OneDriveSDK api;
@@ -38,16 +39,11 @@ public class ConcreteOneDownloadFile implements OneDownloadFile {
 
     @Override
     public void startDownload() throws IOException {
-        RandomAccessFile destination = new RandomAccessFile(this.destinationFile, "rw");
-        try {
-            logger.info("Starting download of "+metadata.getName());
+        try (RandomAccessFile destination = new RandomAccessFile(this.destinationFile, "rw")) {
+            logger.log(Level.INFO, "Starting download of " + metadata.getName());
             destination.write(api.download(metadata.getId()));
         } finally {
-            logger.info("Finished download of "+this.metadata.getName());
-            try {
-                destination.close();
-            } catch (IOException e) {
-            }
+            logger.log(Level.INFO, "Finished download of " + this.metadata.getName());
         }
     }
 

@@ -1,6 +1,8 @@
 package de.tuberlin.onedrivesdk.drive;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -9,14 +11,13 @@ import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK;
 import de.tuberlin.onedrivesdk.common.OneDriveError;
 import de.tuberlin.onedrivesdk.folder.OneFolder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import static de.tuberlin.onedrivesdk.common.ConcreteOneDriveSDK.gson;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,7 +34,8 @@ public class ConcreteOneDrive implements OneDrive {
     @Expose
     protected DriveQuota quota;
     protected String rawJson = "";
-    private static final Logger logger = LogManager.getLogger(ConcreteOneDrive.class);
+
+    private static final Logger logger = getLogger(ConcreteOneDrive.class.getName());
 
     private ConcreteOneDrive() {
     }
@@ -51,8 +53,8 @@ public class ConcreteOneDrive implements OneDrive {
             try {
                 root = (JSONObject) parser.parse(json);
             } catch (ParseException e) {
-                logger.warn("Something failed while parsing Json {}", e.getMessage());
-                logger.debug("Exception while parsing", e);
+                logger.log(Level.WARNING, "Something failed while parsing Json {}", e.getMessage());
+                logger.log(Level.DEBUG, "Exception while parsing", e);
             }
 
             JSONArray values = (JSONArray) root.get("value");
