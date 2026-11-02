@@ -6,9 +6,9 @@
 
 # OneDrive SDK
 
-onedrive v1 api client.
+<img alt="logo" src="src/test/resources/duke_onedrive.png" width="160" />
 
-## Usage
+onedrive v1 api client.
 
 ## Install
 
@@ -76,7 +76,7 @@ String refreshToken = sdk.getRefreshToken();
  sdk.authenticateWithRefreshToken("[refreshToken]");   
   ```
  
-### Featuers
+### Features
 
 #### TextFile Configuration
 ##### [Credentials](http://tawalaya.github.io/OneDriveJavaSDK/docs/de/tuberlin/onedrivesdk/common/OneDriveCredentials.html)
@@ -146,3 +146,7 @@ This project was developed at TU Berlin during the [Cloud Prototyping](http://ww
 ## TODO
 
  * ~~log4j~~
+
+---
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>

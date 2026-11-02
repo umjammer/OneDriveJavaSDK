@@ -31,7 +31,7 @@ public class ConcreteOneUploadFile implements OneUploadFile {
     private static final int chunkSize = 320 * 1024 * 30;
     private final ReentrantLock shouldRun = new ReentrantLock(true);
     private final File fileToUpload;
-    private OneDriveSDK api;
+    private final OneDriveSDK api;
     private boolean canceled = false;
     private boolean finished = false;
     private UploadSession uploadSession;

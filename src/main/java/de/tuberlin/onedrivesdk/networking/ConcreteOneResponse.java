@@ -10,7 +10,7 @@ import okhttp3.Response;
  * Wrapper for OkHTTP Responses  received by the ConcreteOneDriveSDK
  */
 public class ConcreteOneResponse implements OneResponse {
-	private Response response;
+	private final Response response;
 	private byte[] body;
 
 	public ConcreteOneResponse(Response response) throws IOException {

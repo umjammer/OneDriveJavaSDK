@@ -100,7 +100,7 @@ public class ConcreteOneDriveSDKTest {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
         List<OneDrive> drives = api.getAllDrives();
         assertEquals(1, drives.size());
-        assertEquals(drives.get(0).getDriveType(), "personal");
+        assertEquals("personal", drives.get(0).getDriveType());
     }
 
     @Test
@@ -134,9 +134,7 @@ public class ConcreteOneDriveSDKTest {
     @EnabledIf("localPropertiesExists")
     public void testFileNotFound() {
         OneDriveSDK api = ConcreteOneDriveSDKTest.connect();
-        assertThrows(IOException.class, () -> {
-            api.getFileByPath("/File/Not/Found.txt");
-        });
+        assertThrows(IOException.class, () -> api.getFileByPath("/File/Not/Found.txt"));
     }
 
     @Test
@@ -410,7 +408,6 @@ public class ConcreteOneDriveSDKTest {
     @Test
     @EnabledIf("localPropertiesExists")
     public void testFactory() {
-        assertNotNull(new OneDriveFactory());
         assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), OneDriveScope.READWRITE));
         assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(),"",OneDriveScope.READWRITE));
         assertNotNull(OneDriveFactory.createOneDriveSDK(OneDriveCredentials.getClientId(), OneDriveCredentials.getClientSecret(), "", new ExceptionEventHandler() {

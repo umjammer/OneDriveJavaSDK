@@ -58,7 +58,7 @@ public class OneDriveSession implements Runnable {
     private final OneDriveScope[] scopes;
     private OkHttpClient client;
     private ExecutorService refreshThread;
-    private ExceptionEventHandler refreshExceptionHandler;
+    private final ExceptionEventHandler refreshExceptionHandler;
 
     @Expose
     private String tokenType;

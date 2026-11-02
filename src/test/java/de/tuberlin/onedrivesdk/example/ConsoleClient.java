@@ -44,8 +44,8 @@ public class ConsoleClient {
             Vary: Accept-Encoding, Cookie, User-Agent
 
             <!DOCTYPE html><html><head><title>This Message will autodestroy itself in 10 seconds</title></head><body><h1 id='shit'></h1><script type='text/javascript'>var x=location.search;document.getElementById("shit").innerHTML=x.substr(x.indexOf("code=")+5);/script></body></html>""";
-    ExecutorService executor = Executors.newFixedThreadPool(5);
-    private OneDriveSDK api;
+    final ExecutorService executor = Executors.newFixedThreadPool(5);
+    private final OneDriveSDK api;
     private Map<String, OneFile> currentFolderFiles = Maps.newHashMap();
     private Map<String, OneFolder> currentFolderFolders = Maps.newHashMap();
     private Map<String, OneItem> currentFolderItems = Maps.newHashMap();
@@ -95,14 +95,14 @@ public class ConsoleClient {
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
                 desktop.browse(uri);
-            } catch (Exception e) {}
+            } catch (Exception ignored) {}
         }
     }
 
     private static void openWebpage(String url) {
         try {
             openWebpage(new URL(url).toURI());
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
