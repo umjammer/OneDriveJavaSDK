@@ -34,9 +34,9 @@ class SubscriptionRequest {
     // TODO might not work
 //    protected String id;
     @Expose
-    protected String notificationUrl;
+    protected final String notificationUrl;
     @Expose
-    protected String clientState;
+    protected final String clientState;
 
     /** */
     public SubscriptionRequest(String notificationUrl, String clientState) {

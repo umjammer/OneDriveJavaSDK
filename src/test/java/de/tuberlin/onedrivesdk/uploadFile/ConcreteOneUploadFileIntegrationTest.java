@@ -1,7 +1,6 @@
 package de.tuberlin.onedrivesdk.uploadFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
 

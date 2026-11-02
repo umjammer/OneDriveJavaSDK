@@ -6,7 +6,7 @@ package de.tuberlin.onedrivesdk.common;
 public enum ConflictBehavior {
     RENAME("rename"),REPLACE("replace"),FAIL("fail");
 
-    public String name;
+    public final String name;
     ConflictBehavior(String name){
         this.name = name;
     }

@@ -69,9 +69,7 @@ class OneItemTest {
     @Test
     void testParseCorruptItems() {
         String json = "{\"val\":[{},{\"file\":{}}]}";
-        assertThrows(OneDriveException.class, () -> {
-            OneItem.parseItemsFromJson(json, OneItemType.ALL);
-        });
+        assertThrows(OneDriveException.class, () -> OneItem.parseItemsFromJson(json, OneItemType.ALL));
     }
 
     @Test
@@ -88,9 +86,7 @@ class OneItemTest {
     @Test
     void setNullApi() throws Exception {
         OneItem item = OneItem.fromJSON("{}");
-        assertThrows(OneDriveException.class, () -> {
-            item.setApi(null);
-        });
+        assertThrows(OneDriveException.class, () -> item.setApi(null));
     }
 
     @Test

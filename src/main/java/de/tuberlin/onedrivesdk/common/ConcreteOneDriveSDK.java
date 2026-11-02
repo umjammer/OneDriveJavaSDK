@@ -16,13 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.google.gson.GsonBuilder;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.google.gson.Gson;
-
+import com.google.gson.GsonBuilder;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.OneDriveSDK;
 import de.tuberlin.onedrivesdk.drive.ConcreteOneDrive;
@@ -42,6 +37,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import static java.lang.System.getLogger;
 
@@ -51,12 +49,12 @@ import static java.lang.System.getLogger;
  */
 public class ConcreteOneDriveSDK implements OneDriveSDK {
 
-    private static final Logger logger = getLogger(OneDriveSession.class.getName());
+    private static final Logger logger = getLogger(ConcreteOneDriveSDK.class.getName());
 
     public static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    private String baseUrl = "https://api.onedrive.com/v1.0/";
-    private OneDriveSession session;
+    private static final String baseUrl = "https://api.onedrive.com/v1.0/";
+    private final OneDriveSession session;
 
     /**
      * Instantiates a new ConcreteOneDriveSDK.
@@ -97,8 +95,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         PreparedRequest request = new PreparedRequest(requestURL, PreparedRequestMethod.GET);
         String json = this.makeRequest(request).getBodyAsString();
-        List<OneDrive> drives = null;
-        drives = ConcreteOneDrive.parseDrivesFromJson(json);
+        List<OneDrive> drives = ConcreteOneDrive.parseDrivesFromJson(json);
 
         for (OneDrive drive : drives) {
             ((ConcreteOneDrive)drive).setApi(this);
@@ -130,8 +127,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String json = this.makeRequest(request).getBodyAsString();
 
-        ConcreteOneDrive oneDrive = null;
-        oneDrive = ConcreteOneDrive.fromJSON(json);
+        ConcreteOneDrive oneDrive = ConcreteOneDrive.fromJSON(json);
         oneDrive.setApi(this);
 
         return oneDrive;
@@ -144,8 +140,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(String.format(requestURL, id), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        ConcreteOneFolder oneFolder = null;
-        oneFolder = ConcreteOneFolder.fromJSON(json);
+        ConcreteOneFolder oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
@@ -172,8 +167,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         String json = this.makeRequest(request).getBodyAsString();
 
-        ConcreteOneFolder oneFolder = null;
-        oneFolder = ConcreteOneFolder.fromJSON(json);
+        ConcreteOneFolder oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
@@ -206,8 +200,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(String.format(requestURL, this.convertPathToApiPath(pathToFolder)), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        ConcreteOneFolder oneFolder = null;
-        oneFolder = ConcreteOneFolder.fromJSON(json);
+        ConcreteOneFolder oneFolder = ConcreteOneFolder.fromJSON(json);
         oneFolder.setApi(this);
 
         return oneFolder;
@@ -221,8 +214,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(String.format(requestURL, this.convertPathToApiPath(pathToFile)), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        OneItem file = null;
-        file = OneItem.fromJSON(json);
+        OneItem file = OneItem.fromJSON(json);
         file.setApi(this);
 
         return (OneFile) file;
@@ -240,8 +232,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         PreparedRequest request = new PreparedRequest(String.format(requestURL, this.convertPathToApiPath(pathToFile)), PreparedRequestMethod.GET);
 
         String json = this.makeRequest(request).getBodyAsString();
-        OneItem item = null;
-        item = OneItem.fromJSON(json).setRawJson(json);
+        OneItem item = OneItem.fromJSON(json).setRawJson(json);
         item.setApi(this);
 
         return item;
@@ -304,7 +295,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
 
         List<OneItem> items = new ArrayList<>();
         try {
-            String nextLink = null;
+            String nextLink;
             do {
                 List<OneItem> partialItems = OneItem.parseItemsFromJson(json, type);
 //System.err.println("items: " + partialItems.size());
@@ -380,8 +371,8 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
             url = String.format("%s%s?access_token=%s", this.baseUrl, preparedRequest.getPath(), session.getAccessToken());
         }
 
-        //logger.log(Level.DEBUG, String.format("making request to %s",url));
-        //logger.log(Level.DEBUG, String.format("making request to %s",url), new Exception("*** DUMMY ***"));
+        //logger.log(Level.TRACE, "making request to %s".formatted(url));
+        //logger.log(Level.TRACE, "making request to %s".formatted(url), new Exception("*** DUMMY ***"));
 
         Request.Builder builder = new Request.Builder().method(preparedRequest.getMethod(), body).url(url);
 
@@ -411,7 +402,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
         OneResponse response = makeRequest(requestURL, PreparedRequestMethod.POST, createFolderJson);
 
         if (response.getStatusCode() == 201) {
-            ConcreteOneFolder createdFolder = null;
+            ConcreteOneFolder createdFolder;
             try {
                 createdFolder = ConcreteOneFolder.fromJSON(response.getBodyAsString());
             } catch (OneDriveException e) {
@@ -430,7 +421,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * @param url
      * @return boolean
      */
-    private boolean isCompleteURL(String url) {
+    private static boolean isCompleteURL(String url) {
         try {
             URL u = new URL(url); // this would check for the protocol
             u.toURI();// does the extra checking required for validation of URI
@@ -463,7 +454,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * @param path
      * @return String
      */
-    private String convertPathToApiPath(String path) throws UnsupportedEncodingException {
+    private static String convertPathToApiPath(String path) throws UnsupportedEncodingException {
         if (path.equals("/")) {
             return "root/";
         } else {
@@ -478,7 +469,7 @@ public class ConcreteOneDriveSDK implements OneDriveSDK {
      * @param path
      * @return String
      */
-    private String removeSlashes(String path) {
+    private static String removeSlashes(String path) {
         if (path.charAt(0) == '/') {
             path = path.substring(1);
         }

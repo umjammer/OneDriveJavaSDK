@@ -1,8 +1,8 @@
 package de.tuberlin.onedrivesdk.common;
 
-import okhttp3.OkHttpClient;
 import de.tuberlin.onedrivesdk.OneDriveException;
 import de.tuberlin.onedrivesdk.networking.OneDriveSession;
+import okhttp3.OkHttpClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class SessionProvider  {
     private final static String clientID = OneDriveCredentials.getClientId();
     private final static String clientSecret = OneDriveCredentials.getClientSecret();
 
-    static File sessionFile = new File("testSession.ser");
+    static final File sessionFile = new File("testSession.ser");
 
     public static OneDriveSession getSession() throws IOException {
         if(sessionFile.exists()){
@@ -31,7 +31,7 @@ public class SessionProvider  {
 
                     return session;
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
 
             }
         }
@@ -45,7 +45,7 @@ public class SessionProvider  {
 
         openWebpage(new URL(session.getAccessURL()));
 
-        // JUnit Interactivit workaround ... bad but hey...
+        // JUnit Interactive workaround ... bad but hey...
         JFrame f = new JFrame("OAuthCode");
         JTextField codeField = new JTextField();
         codeField.setPreferredSize(new Dimension(100, 21));

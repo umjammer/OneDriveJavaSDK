@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public class PreparedRequest {
 
-    private String method;
-    private String path;
+    private final String method;
+    private final String path;
     private Map<String, String> header = new HashMap<>();
     private byte[] body;
 

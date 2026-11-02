@@ -32,17 +32,17 @@ public class ConcreteOneUpload implements OneUpload {
 
     private static final Logger logger = getLogger(ConcreteOneUpload.class.getName());
 
-    private OneDriveSDK api;
+    private final OneDriveSDK api;
 
     private UploadSession uploadSession;
 
-    private long size;
+    private final long size;
 
     private long offset;
 
-    private Consumer<OneItem> finished;
+    private final Consumer<OneItem> finished;
 
-    private String uploadUrl;
+    private final String uploadUrl;
 
     public ConcreteOneUpload(OneFolder parentFolder,
             String filename,

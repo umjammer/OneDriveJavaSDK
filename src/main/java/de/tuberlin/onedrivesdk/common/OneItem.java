@@ -49,19 +49,19 @@ public abstract class OneItem {
      * The OneDrive id of the resource.
      */
     @Expose
-    protected String id = "";
+    protected final String id = "";
 
     /**
      * The Name.
      */
     @Expose
-    protected String name = "";
+    protected final String name = "";
 
     /**
      * The created by reference. Possible keys are 'user', 'application' and 'device'.
      */
     @Expose
-    protected Map<String, DriveUser> createdBy = new HashMap<>();
+    protected final Map<String, DriveUser> createdBy = new HashMap<>();
 
     /**
      * The creation timestamp of this item.
@@ -73,37 +73,37 @@ public abstract class OneItem {
      * The modified by reference. Possible keys are 'user', 'application' and 'device'.
      */
     @Expose
-    protected Map<String, DriveUser> lastModifiedBy = new HashMap<>();
+    protected final Map<String, DriveUser> lastModifiedBy = new HashMap<>();
 
     /**
      * The last modified timestamp of this item.
      */
     @Expose
-    protected String lastModifiedDateTime = "";
+    protected final String lastModifiedDateTime = "";
 
     /**
      * The cTag.
      */
     @Expose
-    protected String cTag = "";
+    protected final String cTag = "";
 
     /**
      * The eTag.
      */
     @Expose
-    protected String eTag = "";
+    protected final String eTag = "";
 
     /**
      * The size of an item in bytes.
      */
     @Expose
-    protected long size = 0;
+    protected final long size = 0;
 
     /**
      * URL that displays the resource in the browser.
      */
     @Expose
-    protected String webUrl = "";
+    protected final String webUrl = "";
 
     /**
      * The parent folder reference.
