@@ -8,9 +8,9 @@ import com.google.gson.annotations.Expose;
  */
 public class DriveUser {
     @Expose
-    private final String id;
+    private String id;
     @Expose
-    private final String displayName;
+    private String displayName;
 
     public DriveUser(String displayName, String id) {
         this.displayName = displayName;

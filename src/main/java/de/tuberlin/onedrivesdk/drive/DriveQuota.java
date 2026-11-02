@@ -8,15 +8,15 @@ import com.google.gson.annotations.Expose;
  */
 public class DriveQuota {
     @Expose
-    private final long deleted = 0;
+    private long deleted = 0;
     @Expose
-    private final long remaining = 0;
+    private long remaining = 0;
     @Expose
     private String state;
     @Expose
-    private final long total = 0;
+    private long total = 0;
     @Expose
-    private final long used = 0;
+    private long used = 0;
 
     public long getDeleted() {
         return deleted;
